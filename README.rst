@@ -38,11 +38,11 @@ Coming soon.
 Compatability
 -------------
 
-.. image:: https://travis-ci.org/byashimov/typus.svg?branch=master
+.. image:: https://travis-ci.org/byashimov/typus.svg?branch=develop
     :alt: Build Status
     :target: https://travis-ci.org/byashimov/typus
 
-.. image:: https://codecov.io/gh/byashimov/typus/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/byashimov/typus/branch/develop/graph/badge.svg
     :alt: Codecov
     :target: https://codecov.io/gh/byashimov/typus
 
