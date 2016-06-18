@@ -67,7 +67,7 @@ class EnRuExpressions(object):
         # which joines digits and words afterward
         'after': '←$€£%±≤≥≠{0}{1}©'.format(MINUS, TIMES),
         'both': '&',
-        'before': '₽→®™',
+        'before': '₽→®™' + MDASH,
     }
 
     # Adds space before ruble
@@ -97,11 +97,16 @@ class EnRuExpressions(object):
 
     def expr_mdash(self):
         expr = (
-            # -- double dashes
-            (r'{0}+\-\-{0}+'.format(ANYSP), MDASH_PAIR),
+            # Double dash garanties to be replaced with mdash
+            (r'{0}--{0}'.format(WHSP), MDASH_PAIR),
 
-            # Line beginning
-            (r'^(?:\-{{1,2}}|\*){0}+'.format(ANYSP), MDASH + NBSP),
+            # Dash can be between anything except digits
+            # because in that case it's not obvious
+            (r'{0}+\-{{1,2}}{0}+(?!\d\b)'.format(ANYSP), MDASH_PAIR),
+
+            # Line beginning adds nbsp after dash
+            (r'^\-{{1,2}}{0}+'.format(ANYSP),
+             r'{0}{1}'.format(MDASH, NBSP)),
 
             # This one tries not to break minus -- thats why \D is here
             # It joins non-digit with digit or word
