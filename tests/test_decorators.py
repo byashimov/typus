@@ -4,28 +4,29 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import unittest
+import requests
 from builtins import *  # noqa
 
 import mock
 from typus import typus
 from typus.base import TypusBase
-from typus.decorators import escape_codeblocks
+from typus.decorators import escape_html
 
 
-class EscapeCodeblocksOnlyTest(unittest.TestCase):
-    @mock.patch.object(escape_codeblocks, '_restore_codeblocks',
+class EscapeHtmlOnlyTest(unittest.TestCase):
+    @mock.patch.object(escape_html, '_restore_html',
                        return_value='test')
-    def test_restore_codeblocks_call(self, mock_restore_codeblocks):
-        test = escape_codeblocks(TypusBase())
+    def test_restore_html_call(self, mock_restore_html):
+        test = escape_html(TypusBase())
 
         test('test')
-        mock_restore_codeblocks.assert_not_called()
+        mock_restore_html.assert_not_called()
 
         test('<code>test</code>')
-        mock_restore_codeblocks.assert_called_once()
+        mock_restore_html.assert_called_once()
 
 
-class EscapeCodeblocksTypusTest(unittest.TestCase):
+class EscapeHtmlTypusTest(unittest.TestCase):
     def typus(self):
         return lambda text, test: self.assertEqual(typus(text), test)
 
@@ -40,9 +41,48 @@ class EscapeCodeblocksTypusTest(unittest.TestCase):
         test('<pre><code><code>"test"</code></code></pre>',
              '<pre><code><code>"test"</code></code></pre>')
 
+        # Script tag
+        test('<script>"test"</script>', '<script>"test"</script>')
+        test('<script type="text/javascript" src="/test/">"test"</script>',
+             '<script type="text/javascript" src="/test/">"test"</script>')
+
     def test_nested_codeblocks(self):
         # No nested codeblocks
         test = self.typus()
         with self.assertRaises(AssertionError):
             test('<code>dsfsdf <code>"test"</code> "sdfdf"</code>',
                  '<code>dsfsdf <code>"test"</code> "sdfdf"</code>')
+
+    def test_tags(self):
+        test = self.typus()
+        test('<b>"test"</b>', '<b>«test»</b>')
+        test('<b id="test">"test"</b>', '<b id="test">«test»</b>')
+        test('<b>"test"</b>', '<b>«test»</b>')
+
+        # Image: html + xhtml
+        test('<img>"test"', '<img>«test»')
+        test('<img alt="test">"test"', '<img alt="test">«test»')
+        test('<img alt="test"/>"test"', '<img alt="test"/>«test»')
+
+    def test_comments(self):
+        test = self.typus()
+        test('<!-- "(c)" -->', '<!-- "(c)" -->')
+        test('<!--"(c)"-->', '<!--"(c)"-->')
+        test('<!---->', '<!---->')
+
+    def test_doctype(self):
+        test = self.typus()
+        test('<!DOCTYPE html>', '<!DOCTYPE html>')
+        test('<?xml version="1.0" encoding="UTF-8"?>',
+             '<?xml version="1.0" encoding="UTF-8"?>')
+
+    def test_html_page(self):
+        # It's almost blind test
+        url = 'https://validator.w3.org/nu/'
+        html_page = requests.get(url)
+        processed = typus(html_page.text)
+        validator = requests.post(url + '?out=json',
+                                  processed.encode('utf8'),
+                                  headers={'content-type': 'text/html; '
+                                                           'charset=utf-8'})
+        self.assertEqual(validator.json(), {'messages': []})

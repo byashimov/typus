@@ -2,7 +2,7 @@ from .base import TypusBase
 from .expressions import EnRuExpressions
 from .processors import QuotesProcessor
 from .chars import LAQUO, RAQUO, DLQUO, LDQUO
-from .decorators import escape_codeblocks
+from .decorators import escape_html
 
 
 class Typus(EnRuExpressions, TypusBase):
@@ -11,4 +11,4 @@ class Typus(EnRuExpressions, TypusBase):
     processors = (QuotesProcessor, )
 
 
-typus = escape_codeblocks(Typus())
+typus = escape_html(Typus())

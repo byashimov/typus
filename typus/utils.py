@@ -4,7 +4,6 @@ from __future__ import (absolute_import, division, print_function,
 import re
 from builtins import *  # noqa
 
-
 __all__ = ('re_compile', 'map_choices')
 
 

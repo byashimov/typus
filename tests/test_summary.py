@@ -8,7 +8,7 @@ from builtins import *  # noqa
 from tests.test_expressions import EnRuExpressionsTest
 from typus import Typus, typus
 from typus.chars import *  # noqa
-from typus.decorators import escape_codeblocks
+from typus.decorators import escape_html
 from typus.expressions import EnRuExpressions
 
 
@@ -138,7 +138,7 @@ class SummaryTest2(SummaryTest):
         loq, roq, leq, req = LDQUO, RDQUO, LSQUO, RSQUO
 
     def typus(self, *args):
-        testus = escape_codeblocks(self.Testus())
+        testus = escape_html(self.Testus())
 
         def testcase(text, test):
             test = (test.replace(Typus.leq, self.Testus.leq)
