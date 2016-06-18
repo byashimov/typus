@@ -17,7 +17,7 @@ Install the package:
 
 .. code-block:: console
 
-    pip install -U typus
+    pip install -e git://github.com/byashimov/typus.git#egg=typus
 
 Use it:
 
@@ -46,4 +46,4 @@ Compatability
     :alt: Codecov
     :target: https://codecov.io/gh/byashimov/typus
 
-Tested on py 2.5, 2.6, 2.7, 3.3, 3.4, 3.5.
+Tested on py 2.5, 2.6, 2.7, 3.3, 3.4, 3.5 and probably others, please run the tests if your version is not on list.
