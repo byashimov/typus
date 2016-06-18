@@ -8,7 +8,7 @@ setup(
     author='Murad Byashimov',
     author_email='byashimov@gmail.com',
     packages=['typus'],
-    install_requires=['future', 'mock'],
+    install_requires=['future'],
     license='BSD',
     classifiers=[
         'Development Status :: 1 - Planning',
