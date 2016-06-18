@@ -107,6 +107,8 @@ class EnRuExpressionsTest(unittest.TestCase):
         test('2-3', '2{0}3'.format(MDASH))
         test('2-3 44', '2{0}3 44'.format(MDASH))
         test('2 - 3', '2 - 3')
+        test('(15-20 items)', '(15{0}20 items)'.format(MDASH))
+        test('25-foo', '25-foo')
         test('2-3 x 4', '2-3 x 4')
         test('2-3 * 4', '2-3 * 4')
         test('2-3 = 4', '2-3 = 4')

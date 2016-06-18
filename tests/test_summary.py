@@ -54,6 +54,8 @@ class SummaryTest(EnRuExpressionsTest):
         test = self.typus()
         test('2-3', '2{0}3'.format(MDASH))
         test('2-3 44', '2{0}3 44'.format(MDASH))
+        test('(15-20 items)', '(15{1}20{0}items)'.format(NBSP, MDASH))
+        test('25-foo', '25-foo')
 
         # Fails to math
         test('2 - 3', '2{0}{1}{0}3'.format(NBSP, MINUS))

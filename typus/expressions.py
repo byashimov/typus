@@ -172,10 +172,11 @@ class EnRuExpressions(object):
         # Range: 2-3 => 2—3 -- no spaces!
         # Tries to not mess with minus:
         # skips if any math operator was found after range
+        # or word after were wound
         expr = (
-            (r'(^|{0})(\d+)\-(?!\d+{0}+{1})'
-             .format(ANYSP, self.math_operators),
-             r'\1\2{0}'.format(MDASH)),
+            (r'\b(\d+)\-(?!(?:\d+{0}+{1}|{2}))'
+             .format(ANYSP, self.math_operators, self.words),
+             r'\1{0}'.format(MDASH)),
         )
         return expr
 
