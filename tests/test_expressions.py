@@ -76,6 +76,7 @@ class EnRuExpressionsTest(unittest.TestCase):
         test('444 foo', '444{0}foo'.format(NBSP))
         test('444 +', '444{0}+'.format(NBSP))
         test('444 -', '444{0}-'.format(NBSP))
+        test('444 4444 bucks', '444{0}4444 bucks'.format(NBSP))
 
     def test_pairs(self):
         test = self.typus('pairs')
@@ -105,7 +106,7 @@ class EnRuExpressionsTest(unittest.TestCase):
     def test_ranges(self):
         test = self.typus('ranges')
         test('2-3', '2{0}3'.format(MDASH))
-        test('2-3 44', '2{0}3 44'.format(MDASH))
+        test('2-3 foo', '2{0}3 foo'.format(MDASH))
         test('2 - 3', '2 - 3')
         test('(15-20 items)', '(15{0}20 items)'.format(MDASH))
         test('25-foo', '25-foo')

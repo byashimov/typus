@@ -140,9 +140,10 @@ class EnRuExpressions(object):
         return expr
 
     def expr_digit_spaces(self):
-        # Digits less than length 4 and following them words
+        # Digits less than length 4 and following them words or digits
+        # without comma
         expr = (
-            (r'\b(\d{{1,3}}){0}(?={1}|{2})'
+            (r'\b(\d{{1,3}}){0}(?=[0-9]+\b|{1}|{2})'
              .format(WHSP, self.words, self.math_operators), r'\1' + NBSP),
         )
         return expr

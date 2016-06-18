@@ -22,8 +22,8 @@ class SummaryTest(EnRuExpressionsTest):
         test = self.typus()
         test('00 "11" 00', '00 «11» 00')
         test('''00" "11 '22' 11"? "11 '22 "33 33?"' 11" 00 "11 '22' 11" 0"''',
-             '00{0} «11 „22“ 11»? «11 „22 «33 33?»“ 11» 00 «11 „22“ 11» 0{0}'
-             .format(DPRIME))
+             '00{1} «11 „22“ 11»? «11 „22 «33{0}33?»“ 11» 00 «11 „22“ 11» 0{1}'
+             .format(NBSP, DPRIME))  # clashes with digit_spaces
 
     def test_mdash(self):
         test = self.typus()
@@ -53,7 +53,7 @@ class SummaryTest(EnRuExpressionsTest):
     def test_ranges(self):
         test = self.typus()
         test('2-3', '2{0}3'.format(MDASH))
-        test('2-3 44', '2{0}3 44'.format(MDASH))
+        test('2-3 foo', '2{1}3{0}foo'.format(NBSP, MDASH))  # + ranges
         test('(15-20 items)', '(15{1}20{0}items)'.format(NBSP, MDASH))
         test('25-foo', '25-foo')
 
@@ -106,6 +106,7 @@ class SummaryTest(EnRuExpressionsTest):
         test('444 foo', '444{0}foo'.format(NBSP))
         test('444 +', '444{0}+'.format(NBSP))
         test('444 -', '444{0}{1}'.format(NBSP, MDASH))
+        test('444 4444 bucks', '444{0}4444 bucks'.format(NBSP))
 
     def test_example(self):
         test = self.typus()
