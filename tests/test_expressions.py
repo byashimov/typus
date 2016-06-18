@@ -71,7 +71,8 @@ class EnRuExpressionsTest(unittest.TestCase):
 
     def test_digit_spaces(self):
         test = self.typus('digit_spaces')
-        test('4444444 foo', '4444444 foo')
+        test('4444444 fooo', '4444444 fooo')
+        test('4444444 foo', '4444444 foo')  # + untis
         test('444 foo', '444{0}foo'.format(NBSP))
         test('444 +', '444{0}+'.format(NBSP))
         test('444 -', '444{0}-'.format(NBSP))
@@ -90,11 +91,16 @@ class EnRuExpressionsTest(unittest.TestCase):
         test('1mm', '1{0}mm'.format(NBSP))
         test('1 mm', '1{0}mm'.format(NBSP))
         test('1dpi', '1{0}dpi'.format(NBSP))
-        test('1g', '1{0}g'.format(NBSP))
         # Cyrillic
         test('1кг', '1{0}кг'.format(NBSP))
         # Skips
         test('1foobar', '1foobar')
+        # Reverts
+        test('3g', '3g')  # 4G lte
+        test('3d', '3d')  # 3D movie
+        test('2nd', '2nd')  # floor
+        test('3rd', '3rd')  # floor
+        test('4th', '4th')  # floor
 
     def test_ranges(self):
         test = self.typus('ranges')

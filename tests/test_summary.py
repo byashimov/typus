@@ -99,7 +99,8 @@ class SummaryTest(EnRuExpressionsTest):
 
     def test_digit_spaces(self):
         test = self.typus()
-        test('4444444 foo', '4444444 foo')
+        test('4444444 fooo', '4444444 fooo')
+        test('4444444 foo', '4444444{0}foo'.format(NBSP))  # + untis
         test('444 foo', '444{0}foo'.format(NBSP))
         test('444 +', '444{0}+'.format(NBSP))
         test('444 -', '444{0}{1}'.format(NBSP, MDASH))
