@@ -16,7 +16,7 @@ class TypusBase(object):
     """
 
     processors = ()
-    expressions = ()
+    expressions = ''
 
     def __init__(self):
         # Makes possible to decorate Typus.
@@ -29,7 +29,7 @@ class TypusBase(object):
         # Compiles expressions
         self.compiled_exprs = [
             (re_compile(pattern), replace)
-            for name in self.expressions
+            for name in self.expressions.split()
             for pattern, replace in getattr(self, 'expr_' + name)()
         ]
 

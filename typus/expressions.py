@@ -15,7 +15,7 @@ class EnRuExpressions(object):
         'spaces linebreaks complex_symbols mdash sprime dprime phones '
         'digit_spaces pairs units ranges vulgar_fractions math ruabbr ruble '
         'positional_spaces'
-    ).split()
+    )
 
     # Any unicode word
     words = r'[^\W\d_]'
