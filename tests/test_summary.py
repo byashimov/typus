@@ -3,16 +3,17 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import unittest
 from builtins import *  # noqa
 
-from tests.test_expressions import EnRuExpressionsTest
+from tests.test_expressions import EnRuExpressionsTestCommon
 from typus import Typus, typus
 from typus.chars import *  # noqa
 from typus.decorators import escape_html
 from typus.expressions import EnRuExpressions
 
 
-class SummaryTest(EnRuExpressionsTest):
+class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):
     maxDiff = None
 
     def typus(self, *args):
@@ -26,51 +27,29 @@ class SummaryTest(EnRuExpressionsTest):
              .format(NBSP, DPRIME))  # clashes with digit_spaces
 
     def test_mdash(self):
-        test = self.typus()
-        test('--', '--')
-        test('-- ', MDASH + NBSP)  # if line begins, adds nbsp after mdash
-        test(' --', NBSP + MDASH)  # if line ends, adds nbsp before mdash
-        test(' -- ', MDASH_PAIR)
-        test(', -- ', ',' + MDASH_PAIR)
-        test(', - foo', ',{0}foo'.format(MDASH_PAIR))
-        test('2 - 2foo', '2{0}2{1}foo'.format(MDASH_PAIR, NBSP))  # + units
+        test = super(SummaryTest, self).test_mdash()
         test('foo - "11" 00', 'foo{0}«11» 00'.format(MDASH_PAIR))
-        test('foo - foo', 'foo{0}foo'.format(MDASH_PAIR))
+        test('2 - 2foo', '2{0}2{1}foo'.format(MDASH_PAIR, NBSP))  # + units
         test('2 - 2', '2{0}{1}{0}2'.format(NBSP, MINUS))  # + minus
 
     def test_dprime(self):
-        test = self.typus()
-        test('4"', '4' + DPRIME)
+        test = super(SummaryTest, self).test_dprime()
         test('"4"', '«4»')
-        test('" 22"', '" 22' + DPRIME)
 
     def test_phones(self):
-        test = self.typus()
-        test('555-55-55', '555{0}55{0}55'.format(NDASH))
-        test('55-555-55', '55{0}555{0}55'.format(NDASH))
-        # Skips to mdash
-        test('55-555', '55{0}555'.format(MDASH))
+        test = super(SummaryTest, self).test_phones()
+        test('55-555', '55{0}555'.format(MDASH))  # + range
 
     def test_ranges(self):
-        test = self.typus()
-        test('2-3', '2{0}3'.format(MDASH))
+        test = super(SummaryTest, self).test_ranges()
         test('2-3 foo', '2{1}3{0}foo'.format(NBSP, MDASH))  # + ranges
         test('(15-20 items)', '(15{1}20{0}items)'.format(NBSP, MDASH))
-        test('25-foo', '25-foo')
 
         # Fails to math
         test('2 - 3', '2{0}{1}{0}3'.format(NBSP, MINUS))
         test('2-3 x 4', '2{1}3{0}{2}{0}4'.format(NBSP, MINUS, TIMES))
         test('2-3 * 4', '2{1}3{0}{2}{0}4'.format(NBSP, MINUS, TIMES))
         test('2-3 - 4', '2{1}3{0}{1}{0}4'.format(NBSP, MINUS))
-
-    def test_ruble(self):
-        test = self.typus()
-        test('111 руб.', '111{0}₽'.format(NBSP))
-        # This happens because of digit_spaces
-        test('111 рублей', '111{0}рублей'.format(NBSP))
-        # But it doesn't support digit longer than 4
-        test('1111 рублей', '1111 рублей')
 
     def test_math(self):
         test = self.typus()
@@ -93,21 +72,13 @@ class SummaryTest(EnRuExpressionsTest):
                      '3{0}{1}{0}3'.format(NBSP, result))
 
     def test_pairs(self):
-        test = self.typus()
-        test('aaa aaa', 'aaa aaa')
+        test = super(SummaryTest, self).test_pairs()
         test('aaa 2a', 'aaa 2{0}a'.format(NBSP))  # clashes with units
-        test('aaa-aa aa', 'aaa-aa aa')  # important check -- dash and 2 letters
-        test('aaa aa', 'aaa aa')
-        test('a aa a', 'a{0}aa{0}a'.format(NBSP))
 
     def test_digit_spaces(self):
-        test = self.typus()
-        test('4444444 fooo', '4444444 fooo')
+        test = super(SummaryTest, self).test_digit_spaces()
         test('4444444 foo', '4444444{0}foo'.format(NBSP))  # + untis
-        test('444 foo', '444{0}foo'.format(NBSP))
-        test('444 +', '444{0}+'.format(NBSP))
         test('444 -', '444{0}{1}'.format(NBSP, MDASH))
-        test('444 4444 bucks', '444{0}4444 bucks'.format(NBSP))
 
     def test_example(self):
         test = self.typus()

@@ -11,15 +11,10 @@ from typus.chars import *  # noqa
 from typus.expressions import EnRuExpressions
 
 
-class EnRuExpressionsTest(unittest.TestCase):
+class EnRuExpressionsTestCommon(object):
     """
-    Tests expressions one by one.
-    Some of them may return different results depending on which was
-    applied earlier, so order matters. But that also means it's important
-    to be sure they don't affect each other more than expected. This case
-    tests every expression as if it was the only one to apply.
+    Common cases for solo and summary tests.
     """
-
     def typus(self, expression):
         class Testus(TypusBase, EnRuExpressions):
             expressions = (expression,)
@@ -51,10 +46,8 @@ class EnRuExpressionsTest(unittest.TestCase):
         test(' -- ', MDASH_PAIR)
         test(', -- ', ',' + MDASH_PAIR)
         test(', - foo', ',{0}foo'.format(MDASH_PAIR))
-        test('2 - 2foo', '2{0}2foo'.format(MDASH_PAIR))
-        test('foo - "11" 00', 'foo{0}"11" 00'.format(MDASH_PAIR))
         test('foo - foo', 'foo{0}foo'.format(MDASH_PAIR))
-        test('2 - 2', '2 - 2')  # Doesn't clash with minus
+        return test
 
     def test_sprime(self):
         test = self.typus('sprime')
@@ -63,30 +56,30 @@ class EnRuExpressionsTest(unittest.TestCase):
     def test_dprime(self):
         test = self.typus('dprime')
         test('4"', '4' + DPRIME)
+        test('" 22"', '" 22' + DPRIME)
+        return test
 
     def test_phones(self):
         test = self.typus('phones')
         test('555-55-55', '555{0}55{0}55'.format(NDASH))
         test('55-555-55', '55{0}555{0}55'.format(NDASH))
-        # Skips
-        test('55-555', '55-555')
+        return test
 
     def test_digit_spaces(self):
         test = self.typus('digit_spaces')
         test('4444444 fooo', '4444444 fooo')
-        test('4444444 foo', '4444444 foo')  # + untis
         test('444 foo', '444{0}foo'.format(NBSP))
         test('444 +', '444{0}+'.format(NBSP))
-        test('444 -', '444{0}-'.format(NBSP))
         test('444 4444 bucks', '444{0}4444 bucks'.format(NBSP))
+        return test
 
     def test_pairs(self):
         test = self.typus('pairs')
         test('aaa aaa', 'aaa aaa')
-        test('aaa 2a', 'aaa 2a')  # letters only, no digits
         test('aaa-aa aa', 'aaa-aa aa')  # important check -- dash and 2 letters
         test('aaa aa', 'aaa aa')
         test('a aa a', 'a{0}aa{0}a'.format(NBSP))
+        return test
 
     def test_units(self):
         test = self.typus('units')
@@ -107,16 +100,9 @@ class EnRuExpressionsTest(unittest.TestCase):
 
     def test_ranges(self):
         test = self.typus('ranges')
-        test('2-3', '2{0}3'.format(MDASH))
-        test('2-3 foo', '2{0}3 foo'.format(MDASH))
-        test('2 - 3', '2 - 3')
-        test('(15-20 items)', '(15{0}20 items)'.format(MDASH))
         test('25-foo', '25-foo')
-        test('2-3 x 4', '2-3 x 4')
-        test('2-3 * 4', '2-3 * 4')
-        test('2-3 = 4', '2-3 = 4')
-        test('2-3 / 4', '2-3 / 4')
-        test('2-3 - 4', '2-3 - 4')
+        test('2-3', '2{0}3'.format(MDASH))
+        return test
 
     def test_complex_symbols(self):
         test = self.typus('complex_symbols')
@@ -149,8 +135,11 @@ class EnRuExpressionsTest(unittest.TestCase):
 
     def test_ruble(self):
         test = self.typus('ruble')
+        test('111 р', '111{0}₽'.format(NBSP))
+        test('111 р.', '111{0}₽'.format(NBSP))
+        test('111 руб', '111{0}₽'.format(NBSP))
         test('111 руб.', '111{0}₽'.format(NBSP))
-        test('111 рублей', '111 рублей')
+        return test
 
     def test_positional_spaces(self):
         test = self.typus('positional_spaces')
@@ -166,3 +155,46 @@ class EnRuExpressionsTest(unittest.TestCase):
             for char in chars:
                 string = pattern.format(char)
                 test(string.replace(NBSP, WHSP), string)
+
+
+class EnRuExpressionsTest(unittest.TestCase, EnRuExpressionsTestCommon):
+    """
+    Tests expressions one by one.
+    Some of them may return different results depending on which was
+    applied earlier, so order matters. But that also means it's important
+    to be sure they don't affect each other more than expected. This case
+    tests every expression as if it was the only one to apply.
+    """
+    def test_mdash(self):
+        test = super(EnRuExpressionsTest, self).test_mdash()
+        test('foo - "11" 00', 'foo{0}"11" 00'.format(MDASH_PAIR))
+        test('2 - 2foo', '2{0}2foo'.format(MDASH_PAIR))
+        test('2 - 2', '2 - 2')  # Doesn't clash with minus
+
+    def test_phones(self):
+        test = super(EnRuExpressionsTest, self).test_phones()
+        test('55-555', '55-555')  # skips
+
+    def test_ranges(self):
+        test = super(EnRuExpressionsTest, self).test_ranges()
+        test('2-3 foo', '2{0}3 foo'.format(MDASH))
+        test('(15-20 items)', '(15{0}20 items)'.format(MDASH))
+
+        # Skips
+        test('2 - 3', '2 - 3')
+        test('2-3 x 4', '2-3 x 4')
+        test('2-3 * 4', '2-3 * 4')
+        test('2-3 - 4', '2-3 - 4')
+
+    def test_pairs(self):
+        test = super(EnRuExpressionsTest, self).test_pairs()
+        test('aaa 2a', 'aaa 2a')  # letters only, no digits
+
+    def test_digit_spaces(self):
+        test = super(EnRuExpressionsTest, self).test_digit_spaces()
+        test('444 -', '444{0}-'.format(NBSP))
+        test('4444444 foo', '4444444 foo')
+
+    def test_dprime(self):
+        test = super(EnRuExpressionsTest, self).test_dprime()
+        test('"4"', '"4"')
