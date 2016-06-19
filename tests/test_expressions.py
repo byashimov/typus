@@ -47,6 +47,8 @@ class EnRuExpressionsTestCommon(object):
         test(', -- ', ',' + MDASH_PAIR)
         test(', - foo', ',{0}foo'.format(MDASH_PAIR))
         test('foo - foo', 'foo{0}foo'.format(MDASH_PAIR))
+        # Python markdown replaces dash with ndash, don't know why
+        test('foo {0} foo'.format(NDASH), 'foo{0}foo'.format(MDASH_PAIR))
         return test
 
     def test_sprime(self):

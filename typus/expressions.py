@@ -102,11 +102,11 @@ class EnRuExpressions(object):
 
             # Dash can be between anything except digits
             # because in that case it's not obvious
-            (r'{0}+\-{0}+(?!\d\b)'.format(ANYSP), MDASH_PAIR),
+            (r'{0}+[\-|{1}]{0}+(?!\d\b)'.format(ANYSP, NDASH), MDASH_PAIR),
 
             # Same but backwards
             # It joins non-digit with digit or word
-            (r'(\b\D+){0}+\-{0}+'.format(ANYSP, self.words),
+            (r'(\b\D+){0}+[\-|{1}]{0}+'.format(ANYSP, NDASH),
              r'\1{0}'.format(MDASH_PAIR)),
 
             # Line beginning adds nbsp after dash
