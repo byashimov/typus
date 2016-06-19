@@ -97,25 +97,25 @@ class EnRuExpressions(object):
 
     def expr_mdash(self):
         expr = (
-            # Double dash garanties to be replaced with mdash
+            # Double dash guarantees to be replaced with mdash
             (r'{0}--{0}'.format(WHSP), MDASH_PAIR),
 
             # Dash can be between anything except digits
             # because in that case it's not obvious
-            (r'{0}+\-{{1,2}}{0}+(?!\d\b)'.format(ANYSP), MDASH_PAIR),
+            (r'{0}+\-{0}+(?!\d\b)'.format(ANYSP), MDASH_PAIR),
+
+            # Same but backwards
+            # It joins non-digit with digit or word
+            (r'(\b\D+){0}+\-{0}+'.format(ANYSP, self.words),
+             r'\1{0}'.format(MDASH_PAIR)),
 
             # Line beginning adds nbsp after dash
             (r'^\-{{1,2}}{0}+'.format(ANYSP),
              r'{0}{1}'.format(MDASH, NBSP)),
 
-            # This one tries not to break minus -- thats why \D is here
-            # It joins non-digit with digit or word
-            (r'(\D){0}+\-{0}+({1}|\d)'.format(ANYSP, self.words),
-             r'\1{}\2'.format(MDASH_PAIR)),
-
             # Also mdash can be at the end of the line in poems
-            (r'{0}+\-{{1,2}}{0}*($|<br/?>)'.format(ANYSP),
-             r'{0}{1}\1'.format(NBSP, MDASH)),
+            (r'{0}+\-{{1,2}}{0}*(?=$|<br/?>)'.format(ANYSP),
+             r'{0}{1}'.format(NBSP, MDASH)),
         )
         return expr
 

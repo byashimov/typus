@@ -46,13 +46,15 @@ class EnRuExpressionsTest(unittest.TestCase):
     def test_mdash(self):
         test = self.typus('mdash')
         test('--', '--')
-        test('-- ', MDASH + NBSP)  # if line beginning, adds nbsp after mdash
+        test('-- ', MDASH + NBSP)  # if line begins, adds nbsp after mdash
+        test(' --', NBSP + MDASH)  # if line ends, adds nbsp before mdash
         test(' -- ', MDASH_PAIR)
         test(', -- ', ',' + MDASH_PAIR)
         test(', - foo', ',{0}foo'.format(MDASH_PAIR))
         test('2 - 2foo', '2{0}2foo'.format(MDASH_PAIR))
-        test('2 - 2', '2 - 2')  # Doesn't clash with minus
         test('foo - "11" 00', 'foo{0}"11" 00'.format(MDASH_PAIR))
+        test('foo - foo', 'foo{0}foo'.format(MDASH_PAIR))
+        test('2 - 2', '2 - 2')  # Doesn't clash with minus
 
     def test_sprime(self):
         test = self.typus('sprime')

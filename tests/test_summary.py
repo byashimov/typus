@@ -28,14 +28,15 @@ class SummaryTest(EnRuExpressionsTest):
     def test_mdash(self):
         test = self.typus()
         test('--', '--')
-        test('-- ', MDASH + NBSP)
+        test('-- ', MDASH + NBSP)  # if line begins, adds nbsp after mdash
+        test(' --', NBSP + MDASH)  # if line ends, adds nbsp before mdash
         test(' -- ', MDASH_PAIR)
         test(', -- ', ',' + MDASH_PAIR)
-        # Differencies
         test(', - foo', ',{0}foo'.format(MDASH_PAIR))
         test('2 - 2foo', '2{0}2{1}foo'.format(MDASH_PAIR, NBSP))  # + units
-        test('2 - 2', '2{0}{1}{0}2'.format(NBSP, MINUS))  # + minus
         test('foo - "11" 00', 'foo{0}«11» 00'.format(MDASH_PAIR))
+        test('foo - foo', 'foo{0}foo'.format(MDASH_PAIR))
+        test('2 - 2', '2{0}{1}{0}2'.format(NBSP, MINUS))  # + minus
 
     def test_dprime(self):
         test = self.typus()
