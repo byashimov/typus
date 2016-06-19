@@ -16,7 +16,7 @@ class EscapeHtml(object):
     """
 
     html_patterns = (
-        re_compile(r'(<)(head|pre|code|script|style)(.*?>.*?</\2>)'),
+        re_compile(r'(<)(head|iframe|pre|code|script|style)(.*?>.*?</\2>)'),
         # Doctype, xml, closing tag, any tag
         re_compile(r'(<[\!\?/]?[a-z]+.*?>)'),
         # Comments

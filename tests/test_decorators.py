@@ -76,6 +76,16 @@ class EscapeHtmlTypusTest(unittest.TestCase):
         test('<?xml version="1.0" encoding="UTF-8"?>',
              '<?xml version="1.0" encoding="UTF-8"?>')
 
+    def test_head(self):
+        test = self.typus()
+        test('<head><title>(c)</title></head>',
+             '<head><title>(c)</title></head>')
+
+    def test_iframe(self):
+        test = self.typus()
+        test('<iframe height="500" width="500">(c)</iframe>',
+             '<iframe height="500" width="500">(c)</iframe>')
+
     def test_html_page(self):
         # It's almost blind test
         url = 'https://validator.w3.org/nu/'
