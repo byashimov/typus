@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 from builtins import *  # noqa
 from functools import update_wrapper
 
+from .chars import NBSP
 from .utils import re_compile
 
 
@@ -32,7 +33,7 @@ class TypusBase(object):
             for pattern, replace in getattr(self, 'expr_' + name)()
         ]
 
-    def __call__(self, text):
+    def __call__(self, text, debug=False):
         # Applyies processors
         for proc in self.inited_procs:
             text = proc(text)
@@ -40,4 +41,8 @@ class TypusBase(object):
         # Applyies expressions
         for expr, repl in self.compiled_exprs:
             text = expr.sub(repl, text)
+
+        # Makes nbsp visible
+        if debug:
+            return text.replace(NBSP, '_')
         return text

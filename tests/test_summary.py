@@ -17,7 +17,13 @@ class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):
     maxDiff = None
 
     def typus(self, *args):
-        return lambda text, test: self.assertEqual(typus(text), test)
+        def testcase(text, test, debug=False):
+            return self.assertEqual(typus(text, debug), test)
+        return testcase
+
+    def test_debug(self):
+        test = self.typus()
+        test('1m', '1_m', debug=True)
 
     def test_quotes(self):
         test = self.typus()
@@ -128,10 +134,10 @@ class SummaryTest2(SummaryTest):
     def typus(self, *args):
         testus = escape_html(self.Testus())
 
-        def testcase(text, test):
+        def testcase(text, test, debug=False):
             test = (test.replace(Typus.leq, self.Testus.leq)
                         .replace(Typus.req, self.Testus.req)
                         .replace(Typus.loq, self.Testus.loq)
                         .replace(Typus.roq, self.Testus.roq))
-            self.assertEqual(testus(text), test)
+            self.assertEqual(testus(text, debug), test)
         return testcase
