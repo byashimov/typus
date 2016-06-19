@@ -93,12 +93,13 @@ class EnRuExpressionsTestCommon(object):
         test('1кг', '1{0}кг'.format(NBSP))
         # Skips
         test('1foobar', '1foobar')
-        # Reverts
+        # Exceptions
         test('3g', '3g')  # 4G lte
         test('3d', '3d')  # 3D movie
         test('2nd', '2nd')  # floor
         test('3rd', '3rd')  # floor
         test('4th', '4th')  # floor
+        test('1px', '1px')
 
     def test_ranges(self):
         test = self.typus('ranges')

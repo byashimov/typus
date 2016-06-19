@@ -161,11 +161,9 @@ class EnRuExpressions(object):
     def expr_units(self):
         # 1mm and 1 mm => 1_mm
         expr = (
-            (r'\b(\d+{2}?){0}*({1}{{1,3}})\b'
-                .format(WHSP, self.words, DPRIME),
+            (r'\b(\d+){0}*(?!(?:nd|rd|th|d|g|px)\b)({1}{{1,3}})\b'
+             .format(WHSP, self.words),
              r'\1{0}\2'.format(NBSP)),
-            # Reverts for some unitsm like: 3d, 2nd
-            (r'\b(\d+){0}(nd|rd|th|d|g)\b'.format(NBSP), r'\1\2'),
         )
         return expr
 
