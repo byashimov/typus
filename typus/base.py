@@ -7,7 +7,6 @@ from builtins import *  # noqa
 from functools import update_wrapper
 
 from .chars import NBSP
-from .utils import re_compile
 
 
 class TypusBase(object):
@@ -23,28 +22,20 @@ class TypusBase(object):
         # updated=() skips __dic__ attribute
         update_wrapper(self, self.__class__, updated=())
 
-        # Initiates processors
-        self.inited_procs = [proc(self) for proc in self.processors]
+        def chained(text, *args, **kwargs):
+            return text
 
-        # Compiles expressions
-        self.compiled_exprs = [
-            (re_compile(*group[::2]), group[1])
-            for name in self.expressions.split()
-            for group in getattr(self, 'expr_' + name)()
-        ]
+        for proc in (proc(self) for proc in reversed(self.processors)):
+            chained = proc(chained)
+        self.chained_procs = chained
 
-    def __call__(self, text, debug=False):
+    def __call__(self, text, debug=False, *args, **kwargs):
         text = text.strip()
-        if not text:
+        if not text or not self.chained_procs:
             return ''
 
-        # Applyies processors
-        for proc in self.inited_procs:
-            text = proc(text)
-
-        # Applyies expressions
-        for expr, repl in self.compiled_exprs:
-            text = expr.sub(repl, text)
+        # All the magic
+        text = self.chained_procs(text, *args, **kwargs)
 
         # Makes nbsp visible
         if debug:

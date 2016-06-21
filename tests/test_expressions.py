@@ -9,6 +9,7 @@ from builtins import *  # noqa
 from typus.base import TypusBase
 from typus.chars import *  # noqa
 from typus.expressions import EnRuExpressions
+from typus.processors import Expressions
 
 
 class EnRuExpressionsTestCommon(object):
@@ -17,6 +18,7 @@ class EnRuExpressionsTestCommon(object):
     """
     def typus(self, expression):
         class Testus(TypusBase, EnRuExpressions):
+            processors = (Expressions, )
             expressions = expression
 
         testus = Testus()
