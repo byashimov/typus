@@ -13,7 +13,7 @@ from .utils import map_choices
 class EnRuExpressions(object):
     expressions = (
         'spaces linebreaks complex_symbols mdash sprime dprime phones '
-        'digit_spaces pairs units ranges vulgar_fractions math ruabbr ruble '
+        'digit_spaces pairs units ranges vulgar_fractions math ruble abbr '
         'positional_spaces'
     )
 
@@ -197,11 +197,11 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def expr_ruabbr(self):
-        # Fixes spaces between: т.д, т.п., т.ч., т.о., т.е.
+    def expr_abbr(self):
+        # Fixes spaces between shorten words
         expr = (
-            (r'\bт\.{1}*(?=[дпчео]\.)'.format(ANYSP, WHSP),
-             r'т.{0}'.format(NBSP)),
+            (r'\b({1}\.){0}*(?={1})'.format(WHSP, self.words),
+             r'\1{0}'.format(NBSP)),
         )
         return expr
 

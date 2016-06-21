@@ -83,7 +83,6 @@ class EscapeHtmlTypusTest(unittest.TestCase):
              '<iframe height="500" width="500">(c)</iframe>')
 
     def test_html_page(self):
-        return
         # It's almost blind test
         url = 'https://validator.w3.org/nu/'
         html_page = requests.get(url)

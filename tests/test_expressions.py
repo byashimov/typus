@@ -132,13 +132,16 @@ class EnRuExpressionsTestCommon(object):
                 test('3 {0} 3'.format(option), '3 {0} 3'.format(result))
                 test('x {0} 3'.format(option), 'x {0} 3'.format(result))
 
-    def test_ruabbr(self):
-        test = self.typus('ruabbr')
+    def test_abbr(self):
+        test = self.typus('abbr')
         test('т. д.', 'т.{0}д.'.format(NBSP))
         test('т.д.', 'т.{0}д.'.format(NBSP))
         test('т.п.', 'т.{0}п.'.format(NBSP))
         test('т. ч.', 'т.{0}ч.'.format(NBSP))
         test('т.е.', 'т.{0}е.'.format(NBSP))
+        test('Пушкин А.С.', 'Пушкин А.{0}С.'.format(NBSP))
+        test('А.С. Пушкин', 'А.{0}С.{0}Пушкин'.format(NBSP))
+        test('А.С.Пушкин', 'А.{0}С.{0}Пушкин'.format(NBSP))
 
     def test_ruble(self):
         test = self.typus('ruble')
