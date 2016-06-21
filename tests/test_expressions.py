@@ -29,24 +29,26 @@ class EnRuExpressionsTestCommon(object):
 
     def test_spaces(self):
         test = self.typus('spaces')
-        test(' ' * 30, ' ')
+        test('foo{0}bar'.format(' ' * 30), 'foo bar')
 
     def test_linebreaks(self):
         test = self.typus('linebreaks')
-        test('\n', '\n')
-        test('\r\n', '\n')
-        test('\n' * 5, '\n\n')
-        test('\n\n\r\n', '\n\n')
+        test('a\nb', 'a\nb')
+        test('a\r\nb', 'a\nb')
+        test('a{0}b'.format('\n' * 5), 'a\n\nb')
+        test('a\n\n\r\nb', 'a\n\nb')
 
     def test_mdash(self):
         test = self.typus('mdash')
         test('--', '--')
-        test('-- ', MDASH + NBSP)  # if line begins, adds nbsp after mdash
-        test(' --', NBSP + MDASH)  # if line ends, adds nbsp before mdash
-        test(' -- ', MDASH_PAIR)
-        test(', -- ', ',' + MDASH_PAIR)
         test(', - foo', ',{0}foo'.format(MDASH_PAIR))
         test('foo - foo', 'foo{0}foo'.format(MDASH_PAIR))
+        # if line begins, adds nbsp after mdash
+        test('-- foo', '{1}{0}foo'.format(NBSP, MDASH))
+        # if line ends, adds nbsp before mdash
+        test('foo --', 'foo{0}{1}'.format(NBSP, MDASH))
+        test('foo -- bar', 'foo{0}bar'.format(MDASH_PAIR))
+        test(', -- foo', ',{0}foo'.format(MDASH_PAIR))
         # Python markdown replaces dash with ndash, don't know why
         test('foo {0} foo'.format(NDASH), 'foo{0}foo'.format(MDASH_PAIR))
         return test
@@ -148,9 +150,9 @@ class EnRuExpressionsTestCommon(object):
         test = self.typus('positional_spaces')
 
         result = {
-            'after': ' {0}' + NBSP,
-            'both': NBSP + '{0}' + NBSP,
-            'before': NBSP + '{0} ',
+            'after': 'foo {{0}}{0}bar'.format(NBSP),
+            'both': 'foo{0}{{0}}{0}bar'.format(NBSP),
+            'before': 'foo{0}{{0}} bar'.format(NBSP),
         }
 
         for direction, chars in EnRuExpressions.positional_spaces.items():
@@ -168,6 +170,7 @@ class EnRuExpressionsTest(unittest.TestCase, EnRuExpressionsTestCommon):
     to be sure they don't affect each other more than expected. This case
     tests every expression as if it was the only one to apply.
     """
+
     def test_mdash(self):
         test = super(EnRuExpressionsTest, self).test_mdash()
         test('foo - "11" 00', 'foo{0}"11" 00'.format(MDASH_PAIR))

@@ -34,6 +34,10 @@ class TypusBase(object):
         ]
 
     def __call__(self, text, debug=False):
+        text = text.strip()
+        if not text:
+            return ''
+
         # Applyies processors
         for proc in self.inited_procs:
             text = proc(text)

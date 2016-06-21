@@ -77,6 +77,8 @@ class EnRuExpressions(object):
         # Doesn't work correctly with nbsp (replaces with space)
         expr = (
             (r'{0}{{2,}}'.format(ANYSP), WHSP),
+            # trims spaces at the beginning and end of the line
+            (r'(?:^{0}+|{0}+$)'.format(ANYSP), ''),
         )
         return expr
 
