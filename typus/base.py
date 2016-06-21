@@ -28,9 +28,9 @@ class TypusBase(object):
 
         # Compiles expressions
         self.compiled_exprs = [
-            (re_compile(pattern), replace)
+            (re_compile(*group[::2]), group[1])
             for name in self.expressions.split()
-            for pattern, replace in getattr(self, 'expr_' + name)()
+            for group in getattr(self, 'expr_' + name)()
         ]
 
     def __call__(self, text, debug=False):
