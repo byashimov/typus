@@ -13,9 +13,9 @@ from .utils import map_choices
 class EnRuExpressions(object):
     expressions = (
         'spaces linebreaks complex_symbols mdash sprime dprime phones '
-        'digit_spaces pairs units ranges vulgar_fractions math ruabbr ruble '
+        'digit_spaces pairs units ranges vulgar_fractions math ruble abbr '
         'positional_spaces'
-    ).split()
+    )
 
     # Any unicode word
     words = r'[^\W\d_]'
@@ -67,7 +67,7 @@ class EnRuExpressions(object):
         # which joines digits and words afterward
         'after': '←$€£%±≤≥≠{0}{1}©'.format(MINUS, TIMES),
         'both': '&',
-        'before': '₽→®™',
+        'before': '₽→®™' + MDASH,
     }
 
     # Adds space before ruble
@@ -77,6 +77,8 @@ class EnRuExpressions(object):
         # Doesn't work correctly with nbsp (replaces with space)
         expr = (
             (r'{0}{{2,}}'.format(ANYSP), WHSP),
+            # trims spaces at the beginning and end of the line
+            (r'(?:^{0}+|{0}+$)'.format(ANYSP), ''),
         )
         return expr
 
@@ -97,20 +99,25 @@ class EnRuExpressions(object):
 
     def expr_mdash(self):
         expr = (
-            # -- double dashes
-            (r'{0}+\-\-{0}+'.format(ANYSP), MDASH_PAIR),
+            # Double dash guarantees to be replaced with mdash
+            (r'{0}--{0}'.format(WHSP), MDASH_PAIR),
 
-            # Line beginning
-            (r'^(?:\-{{1,2}}|\*){0}+'.format(ANYSP), MDASH + NBSP),
+            # Dash can be between anything except digits
+            # because in that case it's not obvious
+            (r'{0}+[\-|{1}]{0}+(?!\d\b)'.format(ANYSP, NDASH), MDASH_PAIR),
 
-            # This one tries not to break minus -- thats why \D is here
+            # Same but backwards
             # It joins non-digit with digit or word
-            (r'(\D){0}+\-{0}+({1}|\d)'.format(ANYSP, self.words),
-             r'\1{}\2'.format(MDASH_PAIR)),
+            (r'(\b\D+){0}+[\-|{1}]{0}+'.format(ANYSP, NDASH),
+             r'\1{0}'.format(MDASH_PAIR)),
+
+            # Line beginning adds nbsp after dash
+            (r'^\-{{1,2}}{0}+'.format(ANYSP),
+             r'{0}{1}'.format(MDASH, NBSP)),
 
             # Also mdash can be at the end of the line in poems
-            (r'{0}+\-{{1,2}}{0}*($|<br/?>)'.format(ANYSP),
-             r'{0}{1}\1'.format(NBSP, MDASH)),
+            (r'{0}+\-{{1,2}}{0}*(?=$|<br/?>)'.format(ANYSP),
+             r'{0}{1}'.format(NBSP, MDASH)),
         )
         return expr
 
@@ -135,9 +142,10 @@ class EnRuExpressions(object):
         return expr
 
     def expr_digit_spaces(self):
-        # Digits less than length 4 and following them words
+        # Digits less than length 4 and following them words or digits
+        # without comma
         expr = (
-            (r'\b(\d{{1,3}}){0}(?={1}|{2})'
+            (r'\b(\d{{1,3}}){0}(?=[0-9]+\b|{1}|{2})'
              .format(WHSP, self.words, self.math_operators), r'\1' + NBSP),
         )
         return expr
@@ -155,8 +163,8 @@ class EnRuExpressions(object):
     def expr_units(self):
         # 1mm and 1 mm => 1_mm
         expr = (
-            (r'\b(\d{{1,2}}{2}?){0}*({1}{{1,3}})\b'
-                .format(WHSP, self.words, DPRIME),
+            (r'\b(\d+){0}*(?!(?:nd|rd|th|d|g|px)\b)({1}{{1,3}})\b'
+             .format(WHSP, self.words),
              r'\1{0}\2'.format(NBSP)),
         )
         return expr
@@ -165,10 +173,11 @@ class EnRuExpressions(object):
         # Range: 2-3 => 2—3 -- no spaces!
         # Tries to not mess with minus:
         # skips if any math operator was found after range
+        # or word after were wound
         expr = (
-            (r'(^|{0})(\d+)\-(?!\d+{0}+{1})'
-             .format(ANYSP, self.math_operators),
-             r'\1\2{0}'.format(MDASH)),
+            (r'\b(\d+)\-(?!(?:\d+{0}+{1}|{2}))'
+             .format(ANYSP, self.math_operators, self.words),
+             r'\1{0}'.format(MDASH)),
         )
         return expr
 
@@ -188,11 +197,11 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def expr_ruabbr(self):
-        # Fixes spaces between: т.д, т.п., т.ч., т.о., т.е.
+    def expr_abbr(self):
+        # Fixes spaces between shorten words
         expr = (
-            (r'\bт\.{1}*(?=[дпчео]\.)'.format(ANYSP, WHSP),
-             r'т.{0}'.format(NBSP)),
+            (r'\b({1}\.){0}*(?={1})'.format(WHSP, self.words),
+             r'\1{0}'.format(NBSP)),
         )
         return expr
 

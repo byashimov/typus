@@ -7,8 +7,8 @@ from builtins import *  # noqa
 __all__ = ('re_compile', 'map_choices')
 
 
-def re_compile(pattern):
-    return re.compile(pattern, re.I | re.U | re.M | re.S)
+def re_compile(pattern, flags=re.I | re.U | re.M | re.S):
+    return re.compile(pattern, flags)
 
 
 def map_choices(data, find=r'({0})'):
