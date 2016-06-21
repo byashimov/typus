@@ -3,10 +3,11 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import mock
 import unittest
+import requests
 from builtins import *  # noqa
 
-import mock
 from typus import typus, Typus
 
 
@@ -124,6 +125,13 @@ class QuotesProcessorTest(unittest.TestCase):
         test('00 ""22"" 00', '00 «„22“» 00')
         test('00 ""22..."" 00', '00 «„22...“» 00')
         test('00 ""22"..." 00', '00 «„22“...» 00')
+        test('"© test"', '«© test»')
+        test('("test")', '(«test»)')
+        test('"test"*', '«test»*')
+        test('"test"®', '«test»®')
+        test('"""test"""', '«„«test»“»')
+        test('" test"', '" test"')
+        test('" "test""', '" «test»"')
 
         # Weired cases
         test('00 "... "22"" 00', '00 «... „22“» 00')

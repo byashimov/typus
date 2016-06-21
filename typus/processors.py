@@ -83,9 +83,6 @@ class TypoQuotes(BaseProcessor):
     and inches (1") within quotes, that kind of cases are ignored.
     """
 
-    # ?, !, ?!, ?.., !.., ..., …
-    punctuation = r'(?:\.{1,3}|[?!…])'
-
     def __init__(self, *args, **kwargs):
         super(TypoQuotes, self).__init__(*args, **kwargs)
 
@@ -100,20 +97,21 @@ class TypoQuotes(BaseProcessor):
         # Matches quotes on the toppest level (with no quotes within)
         # and replaces with odd level quotes
         self.re_pairs = re_compile(
-            # Starts with quote
-            r'(["\'])'
             # Word beginning or another _already_processed_ quote pair
             # or punctuation or html tag or escaped codeblock
-            r'(\b|{0}|{2}|<)'
+            r'(?<!\w)'
+            # Starts with quote
+            r'(["\'])'
+            r'(?!\s)'
             # Everything but quote inside
             r'([^\1]+?)'
+            # Ends with same quote from the beginnig
+            r'(?!\s)'
+            r'\1'
             # Word end or processed quote or punctuation ot html tag or escaped
             # codeblock or inches or apostrophe
-            r'(\b|{1}|{2}|>|["\'])'
-            # Ends with same quote from the beginnig
-            r'\1'
-            .format(self.loq, self.roq, self.punctuation))
-        self.re_pairs_replace = r'{0}\2\3\4{1}'.format(self.loq, self.roq)
+            r'(?!\w)')
+        self.re_pairs_replace = r'{0}\2{1}'.format(self.loq, self.roq)
 
         # Matches to typo quotes
         self.re_typo_quotes = re_compile(r'({0}|{1}|[^{0}{1}]+)'
