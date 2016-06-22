@@ -3,12 +3,12 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import mock
 import unittest
-import requests
 from builtins import *  # noqa
 
-from typus import typus, Typus
+import mock
+import requests
+from typus import Typus, typus
 
 
 class EscapeHtmlOnlyTest(unittest.TestCase):
@@ -131,6 +131,10 @@ class QuotesProcessorTest(unittest.TestCase):
         test('"""test"""', '«„«test»“»')
         test('" test"', '" test"')
         test('" "test""', '" «test»"')
+        test('"foo 2\'"', '«foo 2\'»')
+
+        # False positive
+        test('"foo 2""', '«foo 2»"')
 
         # Weired cases
         test('00 "... "22"" 00', '00 «... „22“» 00')
