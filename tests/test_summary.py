@@ -6,10 +6,11 @@ from __future__ import (absolute_import, division, print_function,
 import unittest
 from builtins import *  # noqa
 
-from tests.test_expressions import EnRuExpressionsTestCommon
 from typus import Typus, typus
 from typus.chars import *  # noqa
 from typus.expressions import EnRuExpressions
+
+from tests.test_expressions import EnRuExpressionsTestCommon
 
 
 class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):

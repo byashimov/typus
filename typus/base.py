@@ -18,20 +18,28 @@ class TypusBase(object):
     expressions = ''
 
     def __init__(self):
+        assert self.processors
+
         # Makes possible to decorate Typus.
         # updated=() skips __dic__ attribute
         update_wrapper(self, self.__class__, updated=())
 
-        def chained(text, *args, **kwargs):
+        def tail(text, *args, **kwargs):
+            """
+            Tail function to close the chain of processors
+            """
             return text
 
-        for proc in (proc(self) for proc in reversed(self.processors)):
-            chained = proc(chained)
-        self.chained_procs = chained
+        # Makes chain of processors by passing one to next one
+        processors = (p(self) for p in reversed(self.processors))
+        for proc in processors:
+            tail = proc(tail)
+
+        self.chained_procs = tail
 
     def __call__(self, text, debug=False, *args, **kwargs):
         text = text.strip()
-        if not text or not self.chained_procs:
+        if not text:
             return ''
 
         # All the magic
