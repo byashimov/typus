@@ -16,6 +16,7 @@ class EnRuExpressionsTestCommon(object):
     """
     Common cases for solo and summary tests.
     """
+
     def typus(self, expression):
         class Testus(TypusBase, EnRuExpressions):
             processors = (Expressions, )
