@@ -15,7 +15,7 @@ class TypusBase(object):
     """
 
     processors = ()
-    expressions = ''
+    expressions = ()
 
     def __init__(self):
         assert self.processors

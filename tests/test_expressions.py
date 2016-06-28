@@ -20,14 +20,14 @@ class EnRuExpressionsTestCommon(object):
     def typus(self, expression):
         class Testus(TypusBase, EnRuExpressions):
             processors = (Expressions, )
-            expressions = expression
+            expressions = (expression, )
 
         testus = Testus()
         return lambda text, test: self.assertEqual(testus(text), test)
 
     def test_names(self):
         # Makes sure all tests are exist
-        for name in EnRuExpressions.expressions.split():
+        for name in EnRuExpressions.expressions:
             self.assertTrue(hasattr(self, 'test_' + name))
 
     def test_spaces(self):

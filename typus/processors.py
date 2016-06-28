@@ -193,7 +193,7 @@ class Expressions(BaseProcessor):
         # Compiles expressions
         self.compiled_exprs = [
             (re_compile(*group[::2]), group[1])
-            for name in self.typus.expressions.split()
+            for name in self.typus.expressions
             for group in getattr(self.typus, 'expr_' + name)()
         ]
 
