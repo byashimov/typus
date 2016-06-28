@@ -8,7 +8,7 @@ from builtins import *  # noqa
 
 from typus.base import TypusBase
 from typus.chars import *  # noqa
-from typus.expressions import EnRuExpressions
+from typus.mixins import EnRuExpressions
 from typus.processors import Expressions
 
 

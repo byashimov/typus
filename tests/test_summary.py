@@ -8,9 +8,9 @@ from builtins import *  # noqa
 
 from typus import Typus, typus
 from typus.chars import *  # noqa
-from typus.expressions import EnRuExpressions
+from typus.mixins import EnQuotes, EnRuExpressions
 
-from tests.test_expressions import EnRuExpressionsTestCommon
+from tests.test_mixins import EnRuExpressionsTestCommon
 
 
 class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):
@@ -128,8 +128,8 @@ class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):
 
 
 class SummaryTest2(SummaryTest):
-    class Testus(Typus):
-        loq, roq, leq, req = LDQUO, RDQUO, LSQUO, RSQUO
+    class Testus(EnQuotes, Typus):
+        pass
 
     def typus(self, *args):
         testus = self.Testus()

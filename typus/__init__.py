@@ -1,12 +1,9 @@
 from .base import TypusBase
-from .expressions import EnRuExpressions
+from .mixins import EnRuExpressions, RuQuotes
 from .processors import EscapeHtml, EscapePhrases, TypoQuotes, Expressions
-from .chars import LAQUO, RAQUO, DLQUO, LDQUO
 
 
-class Typus(EnRuExpressions, TypusBase):
-    # Quotes: left odd, right odd, left even, right even
-    loq, roq, leq, req = LAQUO, RAQUO, DLQUO, LDQUO
+class Typus(RuQuotes, EnRuExpressions, TypusBase):
     processors = (EscapePhrases, EscapeHtml, TypoQuotes, Expressions)
 
 

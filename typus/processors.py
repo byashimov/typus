@@ -4,10 +4,10 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from builtins import *  # noqa
-from functools import wraps, update_wrapper
+from functools import update_wrapper, wraps
 from itertools import count, cycle
 
-from .chars import *  # noqa
+from .chars import LSQUO, RSQUO, LDQUO, RDQUO, DLQUO, LAQUO, RAQUO
 from .utils import re_compile
 
 

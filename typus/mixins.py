@@ -10,6 +10,15 @@ from .chars import *  # noqa
 from .utils import map_choices
 
 
+class EnQuotes(object):
+    # Quotes: left odd, right odd, left even, right even
+    loq, roq, leq, req = LDQUO, RDQUO, LSQUO, RSQUO
+
+
+class RuQuotes(object):
+    loq, roq, leq, req = LAQUO, RAQUO, DLQUO, LDQUO
+
+
 class EnRuExpressions(object):
     expressions = (
         'spaces linebreaks complex_symbols mdash sprime dprime phones '
