@@ -10,12 +10,21 @@ from .chars import *  # noqa
 from .utils import map_choices
 
 
+class EnQuotes(object):
+    # Quotes: left odd, right odd, left even, right even
+    loq, roq, leq, req = LDQUO, RDQUO, LSQUO, RSQUO
+
+
+class RuQuotes(object):
+    loq, roq, leq, req = LAQUO, RAQUO, DLQUO, LDQUO
+
+
 class EnRuExpressions(object):
     expressions = (
         'spaces linebreaks complex_symbols mdash sprime dprime phones '
         'digit_spaces pairs units ranges vulgar_fractions math ruble abbr '
         'positional_spaces'
-    )
+    ).split()
 
     # Any unicode word
     words = r'[^\W\d_]'
@@ -64,7 +73,7 @@ class EnRuExpressions(object):
 
     positional_spaces = {
         # No need to put vulgar fractions in here because of expr_digit_spaces
-        # which joines digits and words afterward
+        # which joins digits and words afterward
         'after': '←$€£%±≤≥≠{0}{1}©'.format(MINUS, TIMES),
         'both': '&',
         'before': '₽→®™' + MDASH,

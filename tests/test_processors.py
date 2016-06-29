@@ -3,28 +3,56 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import mock
 import unittest
-import requests
 from builtins import *  # noqa
 
-from typus import typus, Typus
+import mock
+import requests
+from typus import Typus, typus
+from typus.processors import BaseProcessor
 
 
-class EscapeHtmlOnlyTest(unittest.TestCase):
-    @mock.patch('typus.processors.EscapeHtml._restore_html',
-                return_value='test')
-    def test_restore_html_call(self, mock_restore_html):
-        typus('test')
-        mock_restore_html.assert_not_called()
+class BaseProcessorTest(unittest.TestCase):
+    def test_base(self):
+        class TestProcessor(BaseProcessor):
+            "Empty processor with no __call__"
 
-        typus('<code>test</code>')
-        mock_restore_html.assert_called_once()
+        class Testus(Typus):
+            processors = (TestProcessor, )
+
+        with self.assertRaises(NotImplementedError):
+            Testus()
 
 
-class EscapeHtmlTypusTest(unittest.TestCase):
+class EscapePhrasesTest(unittest.TestCase):
+    def typus(self):
+        def inner(text, test, *args):
+            self.assertEqual(typus(text, escape_phrases=args), test)
+        return inner
+
+    def test_escaping(self):
+        test = self.typus()
+        test('"foo 2""', '«foo 2"»', '2"')
+        test('"foo (c) (r) (tm)"', '«foo (c) (r) (tm)»', '(c)', '(r)', '(tm)')
+
+        # Doesn't assert like the same one in EscapeHtmlTest
+        test('<code>dsfsdf <code>"test"</code> "sdfdf"</code>',
+             '<code>dsfsdf <code>"test"</code> "sdfdf"</code>',
+             '<code>"test"</code>')
+
+
+class EscapeHtmlTest(unittest.TestCase):
     def typus(self):
         return lambda text, test: self.assertEqual(typus(text), test)
+
+    @mock.patch('typus.processors.EscapeHtml.restore_values',
+                return_value='test')
+    def test_restore_html_call(self, mock_restore_values):
+        typus('test')
+        mock_restore_values.assert_not_called()
+
+        typus('<code>test</code>')
+        mock_restore_values.assert_called_once()
 
     def test_codeblocks(self):
         test = self.typus()
@@ -94,7 +122,7 @@ class EscapeHtmlTypusTest(unittest.TestCase):
         self.assertEqual(validator.json(), {'messages': []})
 
 
-class QuotesProcessorTest(unittest.TestCase):
+class TypoQuotes(unittest.TestCase):
     class Testus(Typus):
         expressions = ''
 
@@ -102,7 +130,7 @@ class QuotesProcessorTest(unittest.TestCase):
         testus = self.Testus()
         return lambda text, test: self.assertEqual(testus(text), test)
 
-    @mock.patch('typus.processors.TypoQuotes._fix_nesting',
+    @mock.patch('typus.processors.TypoQuotes.fix_nesting',
                 return_value='test')
     def test_fix_nesting_call(self, mock_fix_nesting):
         test = self.Testus()
@@ -131,6 +159,10 @@ class QuotesProcessorTest(unittest.TestCase):
         test('"""test"""', '«„«test»“»')
         test('" test"', '" test"')
         test('" "test""', '" «test»"')
+        test('"foo 2\'"', '«foo 2\'»')
+
+        # False positive
+        test('"foo 2""', '«foo 2»"')
 
         # Weired cases
         test('00 "... "22"" 00', '00 «... „22“» 00')

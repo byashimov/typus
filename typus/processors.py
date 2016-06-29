@@ -4,76 +4,99 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from builtins import *  # noqa
-from functools import wraps
+from functools import update_wrapper, wraps
 from itertools import count, cycle
 
-from .chars import *  # noqa
+from .chars import LSQUO, RSQUO, LDQUO, RDQUO, DLQUO, LAQUO, RAQUO
 from .utils import re_compile
 
 
 class BaseProcessor(object):
     """
-    Processors are almost like regular functions except they are initiated
-    and stored inside Typus instance so they can pre-cache different stuff
-    like regexps which could depend on Typus configuration
+    Processors are simple python decorators, except they are initiated
+    and stored within Typus instance.
     """
 
     def __init__(self, typus):
+        # Makes possible to decorate processor
+        update_wrapper(self, self.__class__, updated=())
+
+        # Stores Typus to access it's configuration
         self.typus = typus
 
+    def __call__(self, typus):
+        raise NotImplementedError
 
-class EscapeHtml(BaseProcessor):
+
+class EscapePhrases(BaseProcessor):
     """
-    Extracts html tags and puts them back after
-    typus processed.
-    Warning: doesn't support nested code tags.
+    Escapes phrases which should never be processed.
     """
 
-    html_patterns = (
-        re_compile(r'(<)(head|iframe|pre|code|script|style)(.*?>.*?</\2>)'),
-        # Doctype, xml, closing tag, any tag
-        re_compile(r'(<[\!\?/]?[a-z]+.*?>)'),
-        # Comments
-        re_compile(r'(<\!\-\-.*?\-\->)'),
-    )
-    html_placeholder = '<codeblock{0}>'
+    placeholder = '{{#phrase{0}#}}'
 
     def __call__(self, func):
-        @wraps(func)
+        @wraps(self, updated=())
         def inner(text, *args, **kwargs):
-            escaped = text
             storage = []
-            uid = count()
-            for pattern in self.html_patterns:
-                escaped = pattern.sub(
-                    self._save_html(storage, uid), escaped)
+            counter = count()
+            escaped = self.save_values(text, storage, counter, **kwargs)
 
             # Runs typus
             processed = func(escaped, *args, **kwargs)
             if not storage:
                 return processed
 
-            restored = self._restore_html(storage, processed)
+            restored = self.restore_values(processed, storage, **kwargs)
             return restored
         return inner
 
-    def _save_html(self, storage, uid):
-        def replace(match):
-            key = self.html_placeholder.format(next(uid))
-            html = ''.join(match.groups())
-            storage.append((key, html))
-            return key
-        return replace
+    def save_values(self, text, storage, counter, escape_phrases=(), **kwargs):
+        for phrase in escape_phrases:
+            key = self.placeholder.format(next(counter))
+            text = text.replace(phrase, key)
+            storage.append((key, phrase))
+        return text
 
-    def _restore_html(self, storage, text):
+    def restore_values(self, text, storage, **kwargs):
         """
-        This one could be static or even direclty placed in __call__
-        but I need to know if it's called or not in mocked cases
-        because coverage.py returnes summary report
+        Puts data to the text in reversed order.
+        It's important to loop over and restore text step by step
+        because some 'stored' chunks may contain keys to other ones.
         """
         for key, value in reversed(storage):
             text = text.replace(key, value)
         return text
+
+
+class EscapeHtml(EscapePhrases):
+    """
+    Extracts html tags and puts them back after
+    typus processed.
+    Warning: doesn't support nested code tags.
+    """
+
+    placeholder = '{{#html{0}#}}'
+    patterns = (
+        re_compile(r'(<)(head|iframe|pre|code|script|style)(.*?>.*?</\2>)'),
+        # Doctype, xml, closing tag, any tag
+        re_compile(r'(<[\!\?/]?[a-z]+.*?>)'),
+        # Comments
+        re_compile(r'(<\!\-\-.*?\-\->)'),
+    )
+
+    def save_values(self, text, storage, counter, **kwargs):
+        for pattern in self.patterns:
+            text = pattern.sub(self._replace(storage, counter), text)
+        return text
+
+    def _replace(self, storage, counter):
+        def inner(match):
+            key = self.placeholder.format(next(counter))
+            html = ''.join(match.groups())
+            storage.append((key, html))
+            return key
+        return inner
 
 
 class TypoQuotes(BaseProcessor):
@@ -94,23 +117,22 @@ class TypoQuotes(BaseProcessor):
         quotes = ''.join((LSQUO, RSQUO, LDQUO, RDQUO, DLQUO, LAQUO, RAQUO))
         self.re_normalize = re_compile(r'[{0}]'.format(quotes))
 
-        # Matches quotes on the toppest level (with no quotes within)
+        # Matches nested quotes (with no quotes within)
         # and replaces with odd level quotes
         self.re_pairs = re_compile(
-            # Word beginning or another _already_processed_ quote pair
-            # or punctuation or html tag or escaped codeblock
+            # No words before
             r'(?<!\w)'
             # Starts with quote
             r'(["\'])'
             r'(?!\s)'
             # Everything but quote inside
             r'([^\1]+?)'
-            # Ends with same quote from the beginnig
             r'(?!\s)'
+            # Ends with same quote from the beginning
             r'\1'
-            # Word end or processed quote or punctuation ot html tag or escaped
-            # codeblock or inches or apostrophe
-            r'(?!\w)')
+            # No words afterwards
+            r'(?!\w)'
+        )
         self.re_pairs_replace = r'{0}\2{1}'.format(self.loq, self.roq)
 
         # Matches to typo quotes
@@ -118,9 +140,9 @@ class TypoQuotes(BaseProcessor):
                                          .format(self.loq, self.roq))
 
     def __call__(self, func):
-        @wraps(func)
+        @wraps(self, updated=())
         def inner(text, *args, **kwargs):
-            # Normalizes edtior's quotes to double one
+            # Normalizes editor's quotes to double one
             normalized = self.re_normalize.sub('"', text)
 
             # Replaces normalized quotes with first level ones, starting
@@ -139,11 +161,11 @@ class TypoQuotes(BaseProcessor):
                 return func(normalized, *args, **kwargs)
 
             # At this point all quotes are of odd type, have to fix it
-            fixed = self._fix_nesting(normalized)
+            fixed = self.fix_nesting(normalized)
             return func(fixed, *args, **kwargs)
         return inner
 
-    def _fix_nesting(self, normalized):
+    def fix_nesting(self, normalized):
         # Toggles quotes for any other nesting pair
         pairs = cycle((self.loq + self.roq, self.leq + self.req))
         quoted, pair = '', None
@@ -161,20 +183,24 @@ class TypoQuotes(BaseProcessor):
 
 
 class Expressions(BaseProcessor):
+    """
+    Provides expressions support.
+    """
+
     def __init__(self, *args, **kwargs):
         super(Expressions, self).__init__(*args, **kwargs)
 
         # Compiles expressions
         self.compiled_exprs = [
             (re_compile(*group[::2]), group[1])
-            for name in self.typus.expressions.split()
+            for name in self.typus.expressions
             for group in getattr(self.typus, 'expr_' + name)()
         ]
 
     def __call__(self, func):
-        @wraps(func)
+        @wraps(self, updated=())
         def inner(text, *args, **kwargs):
-            # Applyies expressions
+            # Applies expressions
             for expr, repl in self.compiled_exprs:
                 text = expr.sub(repl, text)
             text = func(text, *args, **kwargs)
