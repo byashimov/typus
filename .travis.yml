@@ -13,7 +13,7 @@ cache:
   directories:
     - $HOME/.cache/pip
 install:
-  - pip install tox codecov
+  - travis_retry pip install "virtualenv<14.0.0" "coverage<4" tox codecov
 script:
   - tox
 after_success:
