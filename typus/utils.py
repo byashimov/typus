@@ -11,12 +11,29 @@ def re_compile(pattern, flags=re.I | re.U | re.M | re.S):
     return re.compile(pattern, flags)
 
 
-def map_choices(data, find=r'({0})'):
+class idict(dict):
+    """
+    Case insensitive dict.
+    """
+
+    def __setitem__(self, key, value):
+        super(idict, self).__setitem__(key.lower(), value)
+
+    def __getitem__(self, key):
+        return super(idict, self).__getitem__(key.lower())
+
+
+def map_choices(data, find=r'({0})', dict_class=idict):
     """
     For simple cases when you just need to map founds to those
     values in a dictionary.
     """
-    options = data.copy()
+    options = dict_class(data)
     choices = '|'.join(re.escape(x) for x in options)
     pattern = find.format(choices)
-    return pattern, lambda match: options[match.groups()[0]]
+
+    def replace(match):
+        key = match.group(0)
+        return options[key]
+
+    return pattern, replace

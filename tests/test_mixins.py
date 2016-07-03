@@ -116,6 +116,8 @@ class EnRuExpressionsTestCommon(object):
         test = self.typus('complex_symbols')
         for key, value in EnRuExpressions.complex_symbols.items():
             test(key, value)
+        # Case insensitive test
+        test('(C)', '©')
 
     def test_vulgar_fractions(self):
         test = self.typus('vulgar_fractions')
