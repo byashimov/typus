@@ -14,10 +14,13 @@ def re_compile(pattern, flags=re.I | re.U | re.M | re.S):
 class idict(dict):
     """
     Case insensitive dict.
+    WARNING: It provides Typus required features only.
     """
 
-    def __setitem__(self, key, value):
-        super(idict, self).__setitem__(key.lower(), value)
+    def __init__(self, obj=None, **kwargs):
+        obj = dict(obj, **kwargs) if obj else kwargs
+        super(idict, self).__init__(**{key.lower(): value
+                                       for key, value in obj.items()})
 
     def __getitem__(self, key):
         return super(idict, self).__getitem__(key.lower())
