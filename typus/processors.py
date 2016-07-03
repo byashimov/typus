@@ -53,6 +53,8 @@ class EscapePhrases(BaseProcessor):
 
     def save_values(self, text, storage, counter, escape_phrases=(), **kwargs):
         for phrase in escape_phrases:
+            if not phrase.strip():
+                continue
             key = self.placeholder.format(next(counter))
             text = text.replace(phrase, key)
             storage.append((key, phrase))
