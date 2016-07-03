@@ -6,9 +6,9 @@ from __future__ import (absolute_import, division, print_function,
 import unittest
 from builtins import *  # noqa
 
-from typus import Typus, typus
+from typus import en_typus, ru_typus
 from typus.chars import *  # noqa
-from typus.mixins import EnQuotes, EnRuExpressions
+from typus.mixins import EnRuExpressions
 
 from tests.test_mixins import EnRuExpressionsTestCommon
 
@@ -18,7 +18,7 @@ class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):
 
     def typus(self, *args):
         def testcase(text, test, debug=False):
-            return self.assertEqual(typus(text, debug), test)
+            return self.assertEqual(ru_typus(text, debug), test)
         return testcase
 
     def test_debug(self):
@@ -128,16 +128,11 @@ class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):
 
 
 class SummaryTest2(SummaryTest):
-    class Testus(EnQuotes, Typus):
-        pass
-
     def typus(self, *args):
-        testus = self.Testus()
-
         def testcase(text, test, debug=False):
-            test = (test.replace(Typus.leq, self.Testus.leq)
-                        .replace(Typus.req, self.Testus.req)
-                        .replace(Typus.loq, self.Testus.loq)
-                        .replace(Typus.roq, self.Testus.roq))
-            self.assertEqual(testus(text, debug), test)
+            test = (test.replace(ru_typus.leq, en_typus.leq)
+                        .replace(ru_typus.req, en_typus.req)
+                        .replace(ru_typus.loq, en_typus.loq)
+                        .replace(ru_typus.roq, en_typus.roq))
+            self.assertEqual(en_typus(text, debug), test)
         return testcase

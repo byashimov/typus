@@ -5,22 +5,22 @@ import unittest
 from builtins import *  # noqa
 
 import mock
-from typus import TypusBase, typus
+from typus import TypusCore, ru_typus
 
 
 class TypusTest(unittest.TestCase):
-    @mock.patch('typus.typus.chained_procs')
+    @mock.patch('typus.ru_typus.chained_procs')
     def test_empty(self, mock_chained_procs):
-        self.assertEqual(typus(''), '')
+        self.assertEqual(ru_typus(''), '')
         mock_chained_procs.assert_not_called()
 
     def test_debug(self):
-        self.assertEqual(typus('2mm', debug=True), '2_mm')
+        self.assertEqual(ru_typus('2mm', debug=True), '2_mm')
 
 
-class TypusBaseTest(unittest.TestCase):
+class BaseTypusTest(unittest.TestCase):
     def test_empty(self):
-        class Testus(TypusBase):
+        class Testus(TypusCore):
             pass
 
         with self.assertRaises(AssertionError):

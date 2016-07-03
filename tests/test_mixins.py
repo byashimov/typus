@@ -6,8 +6,8 @@ from __future__ import (absolute_import, division, print_function,
 import unittest
 from builtins import *  # noqa
 
-from typus.base import TypusBase
 from typus.chars import *  # noqa
+from typus.core import TypusCore
 from typus.mixins import EnRuExpressions
 from typus.processors import Expressions
 
@@ -18,7 +18,7 @@ class EnRuExpressionsTestCommon(object):
     """
 
     def typus(self, expression):
-        class Testus(TypusBase, EnRuExpressions):
+        class Testus(EnRuExpressions, TypusCore):
             processors = (Expressions, )
             expressions = (expression, )
 
@@ -170,7 +170,7 @@ class EnRuExpressionsTestCommon(object):
                 test(string.replace(NBSP, WHSP), string)
 
 
-class EnRuExpressionsTest(unittest.TestCase, EnRuExpressionsTestCommon):
+class EnRuExpressionsTest(EnRuExpressionsTestCommon, unittest.TestCase):
     """
     Tests expressions one by one.
     Some of them may return different results depending on which was

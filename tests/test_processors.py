@@ -8,7 +8,8 @@ from builtins import *  # noqa
 
 import mock
 import requests
-from typus import Typus, typus
+from typus import RuTypus, ru_typus
+from typus.core import TypusCore
 from typus.processors import BaseProcessor
 
 
@@ -17,7 +18,7 @@ class BaseProcessorTest(unittest.TestCase):
         class TestProcessor(BaseProcessor):
             "Empty processor with no __call__"
 
-        class Testus(Typus):
+        class Testus(TypusCore):
             processors = (TestProcessor, )
 
         with self.assertRaises(NotImplementedError):
@@ -27,7 +28,7 @@ class BaseProcessorTest(unittest.TestCase):
 class EscapePhrasesTest(unittest.TestCase):
     def typus(self):
         def inner(text, test, *args):
-            self.assertEqual(typus(text, escape_phrases=args), test)
+            self.assertEqual(ru_typus(text, escape_phrases=args), test)
         return inner
 
     def test_escaping(self):
@@ -40,18 +41,21 @@ class EscapePhrasesTest(unittest.TestCase):
              '<code>dsfsdf <code>"test"</code> "sdfdf"</code>',
              '<code>"test"</code>')
 
+        # Empty string, nothing to escape
+        test('"foo"', '«foo»', '')
+
 
 class EscapeHtmlTest(unittest.TestCase):
     def typus(self):
-        return lambda text, test: self.assertEqual(typus(text), test)
+        return lambda text, test: self.assertEqual(ru_typus(text), test)
 
     @mock.patch('typus.processors.EscapeHtml.restore_values',
                 return_value='test')
     def test_restore_html_call(self, mock_restore_values):
-        typus('test')
+        ru_typus('test')
         mock_restore_values.assert_not_called()
 
-        typus('<code>test</code>')
+        ru_typus('<code>test</code>')
         mock_restore_values.assert_called_once()
 
     def test_codeblocks(self):
@@ -114,7 +118,7 @@ class EscapeHtmlTest(unittest.TestCase):
         # It's almost blind test
         url = 'https://validator.w3.org/nu/'
         html_page = requests.get(url)
-        processed = typus(html_page.text)
+        processed = ru_typus(html_page.text)
         validator = requests.post(url + '?out=json',
                                   processed.encode('utf8'),
                                   headers={'content-type': 'text/html; '
@@ -123,7 +127,7 @@ class EscapeHtmlTest(unittest.TestCase):
 
 
 class TypoQuotes(unittest.TestCase):
-    class Testus(Typus):
+    class Testus(RuTypus):
         expressions = ''
 
     def typus(self):

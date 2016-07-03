@@ -9,7 +9,7 @@ from functools import update_wrapper
 from .chars import NBSP
 
 
-class TypusBase(object):
+class TypusCore(object):
     """
     Typographer base
     """

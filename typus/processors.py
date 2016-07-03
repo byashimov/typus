@@ -7,7 +7,7 @@ from builtins import *  # noqa
 from functools import update_wrapper, wraps
 from itertools import count, cycle
 
-from .chars import LSQUO, RSQUO, LDQUO, RDQUO, DLQUO, LAQUO, RAQUO
+from .chars import DLQUO, LAQUO, LDQUO, LSQUO, RAQUO, RDQUO, RSQUO
 from .utils import re_compile
 
 
