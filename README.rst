@@ -1,11 +1,11 @@
 Typus
 =====
 
-Russian language typographer.
+Typus is a typography tool.
 
 
-Disclamer
----------
+Disclaimer
+----------
 
 This project is under development and not production ready *yet*.
 
@@ -23,10 +23,13 @@ Use it:
 
 .. code-block:: python
 
-    from typus import typus
+    from typus import en_typus, ru_typus
 
-    typus('"Красивое лучше, чем уродливое." (с) Тим Петерс.')
-    '«Красивое лучше, чем уродливое.» ©_Тим Петерс.'  # _ is nbsp
+    en_typus('"Beautiful is better than ugly." (c) Tim Peters.', debug=True)
+    '“Beautiful is_better than ugly.” ©_Tim Peters.'  # _ for nbsp
+
+    ru_typus('"Красивое лучше, чем уродливое." (с) Тим Петерс.')
+    '«Красивое лучше, чем уродливое.» © Тим Петерс.'  # cyrillic 'с' in '(с)'
 
 
 Documentation
@@ -35,7 +38,7 @@ Documentation
 Coming soon.
 
 
-Compatability
+Compatibility
 -------------
 
 .. image:: https://travis-ci.org/byashimov/typus.svg?branch=develop
