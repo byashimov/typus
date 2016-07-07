@@ -1,13 +1,13 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import unittest
+import unittest2
 from builtins import *  # noqa
 
 from typus.utils import idict
 
 
-class IdictTest(unittest.TestCase):
+class IdictTest(unittest2.TestCase):
     def setUp(self):
         self.source = {'A': 0, 'b': 1}
         self.compare = {'a': 0, 'b': 1}

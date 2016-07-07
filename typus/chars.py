@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 NBSP = '\u00A0'
 WHSP = ' '
-ANYSP = r'[{}{}]'.format(WHSP, NBSP)
+ANYSP = r'[{0}{1}]'.format(WHSP, NBSP)
 
 NDASH = '–'
 MDASH = '—'

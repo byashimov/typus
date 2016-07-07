@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import os
-import unittest
+import unittest2
 from builtins import *  # noqa
 
 import mock
@@ -14,7 +14,7 @@ from typus.core import TypusCore
 from typus.processors import BaseProcessor
 
 
-class BaseProcessorTest(unittest.TestCase):
+class BaseProcessorTest(unittest2.TestCase):
     def test_base(self):
         class TestProcessor(BaseProcessor):
             "Empty processor with no __call__"
@@ -26,7 +26,7 @@ class BaseProcessorTest(unittest.TestCase):
             Testus()
 
 
-class EscapePhrasesTest(unittest.TestCase):
+class EscapePhrasesTest(unittest2.TestCase):
     def typus(self):
         def inner(text, test, *args):
             self.assertEqual(ru_typus(text, escape_phrases=args), test)
@@ -46,7 +46,7 @@ class EscapePhrasesTest(unittest.TestCase):
         test('"foo"', '«foo»', '')
 
 
-class EscapeHtmlTest(unittest.TestCase):
+class EscapeHtmlTest(unittest2.TestCase):
     def typus(self):
         return lambda text, test: self.assertEqual(ru_typus(text), test)
 
@@ -115,7 +115,7 @@ class EscapeHtmlTest(unittest.TestCase):
         test('<iframe height="500" width="500">(c)</iframe>',
              '<iframe height="500" width="500">(c)</iframe>')
 
-    @unittest.skipIf(os.getenv('TYPUS_SKIP_W3_TEST'), 'Leave for CI')
+    @unittest2.skipIf(os.getenv('TYPUS_SKIP_W3_TEST'), 'Leave for CI')
     def test_html_page(self):
         # It's almost blind test
         url = 'https://validator.w3.org/nu/'
@@ -128,7 +128,7 @@ class EscapeHtmlTest(unittest.TestCase):
         self.assertEqual(validator.json(), {'messages': []})
 
 
-class TypoQuotes(unittest.TestCase):
+class TypoQuotes(unittest2.TestCase):
     class Testus(RuTypus):
         expressions = ''
 

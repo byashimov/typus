@@ -3,7 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import unittest
+import unittest2
 from builtins import *  # noqa
 
 from typus.chars import *  # noqa
@@ -170,7 +170,7 @@ class EnRuExpressionsTestCommon(object):
                 test(string.replace(NBSP, WHSP), string)
 
 
-class EnRuExpressionsTest(EnRuExpressionsTestCommon, unittest.TestCase):
+class EnRuExpressionsTest(EnRuExpressionsTestCommon, unittest2.TestCase):
     """
     Tests expressions one by one.
     Some of them may return different results depending on which was

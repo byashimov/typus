@@ -3,7 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import unittest
+import unittest2
 from builtins import *  # noqa
 
 from typus import en_typus, ru_typus
@@ -13,7 +13,7 @@ from typus.mixins import EnRuExpressions
 from tests.test_mixins import EnRuExpressionsTestCommon
 
 
-class SummaryTest(unittest.TestCase, EnRuExpressionsTestCommon):
+class SummaryTest(unittest2.TestCase, EnRuExpressionsTestCommon):
     maxDiff = None
 
     def typus(self, *args):

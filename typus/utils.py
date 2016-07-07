@@ -19,8 +19,8 @@ class idict(dict):
 
     def __init__(self, obj=None, **kwargs):
         obj = dict(obj, **kwargs) if obj else kwargs
-        super(idict, self).__init__(**{key.lower(): value
-                                       for key, value in obj.items()})
+        normalized = dict((key.lower(), value) for key, value in obj.items())
+        super(idict, self).__init__(**normalized)
 
     def __getitem__(self, key):
         return super(idict, self).__getitem__(key.lower())
