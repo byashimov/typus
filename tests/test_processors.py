@@ -3,6 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import os
 import unittest
 from builtins import *  # noqa
 
@@ -114,6 +115,7 @@ class EscapeHtmlTest(unittest.TestCase):
         test('<iframe height="500" width="500">(c)</iframe>',
              '<iframe height="500" width="500">(c)</iframe>')
 
+    @unittest.skipIf(os.getenv('TYPUS_SKIP_W3_TEST'), 'Leave for CI')
     def test_html_page(self):
         # It's almost blind test
         url = 'https://validator.w3.org/nu/'
