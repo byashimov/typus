@@ -1,6 +1,6 @@
 from .core import TypusCore
-from .mixins import EnRuExpressions, EnQuotes, RuQuotes
-from .processors import EscapeHtml, EscapePhrases, TypoQuotes, Expressions
+from .mixins import EnQuotes, EnRuExpressions, RuQuotes
+from .processors import EscapeHtml, EscapePhrases, Expressions, TypoQuotes
 
 
 class BaseTypus(EnRuExpressions, TypusCore):

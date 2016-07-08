@@ -4,11 +4,11 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import os
-import unittest2
 from builtins import *  # noqa
 
 import mock
 import requests
+import unittest2
 from typus import RuTypus, ru_typus
 from typus.core import TypusCore
 from typus.processors import BaseProcessor

@@ -3,9 +3,9 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import unittest2
 from builtins import *  # noqa
 
+import unittest2
 from typus.chars import *  # noqa
 from typus.core import TypusCore
 from typus.mixins import EnRuExpressions
