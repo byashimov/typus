@@ -3,8 +3,9 @@ from __future__ import (absolute_import, division, print_function,
 
 import re
 from builtins import *  # noqa
+from functools import wraps
 
-__all__ = ('re_compile', 'map_choices')
+__all__ = ('re_compile', 'map_choices', 'idict', 'splinter')
 
 
 def re_compile(pattern, flags=re.I | re.U | re.M | re.S):
@@ -38,5 +39,24 @@ def map_choices(data, find=r'({0})', dict_class=idict):
     def replace(match):
         key = match.group(0)
         return options[key]
-
     return pattern, replace
+
+
+def splinter(delimiter):
+    """
+    Almost like str.split() but can handle delimiter escaping.
+    """
+
+    delim = delimiter.strip(' \\')
+    if not delim:
+        raise ValueError('Delimiter can not be a slash or an empty space.')
+
+    # Doesn't split escaped delimiters
+    pattern = re.compile(r'(?<!\\){0}\s*'.format(re.escape(delim)))
+
+    @wraps(splinter)
+    def inner(phrases):
+        # Deletes delimiter escaping and strips spaces
+        return [x.replace('\\' + delim, delim).strip()
+                for x in pattern.split(phrases)]
+    return inner
