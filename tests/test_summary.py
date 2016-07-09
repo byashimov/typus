@@ -38,8 +38,8 @@ class SummaryTest(unittest2.TestCase, EnRuExpressionsTestCommon):
         test('2 - 2foo', '2{0}2{1}foo'.format(MDASH_PAIR, NBSP))  # + units
         test('2 - 2', '2{0}{1}{0}2'.format(NBSP, MINUS))  # + minus
 
-    def test_dprime(self):
-        test = super(SummaryTest, self).test_dprime()
+    def test_primes(self):
+        test = super(SummaryTest, self).test_primes()
         test('"4"', '«4»')
 
     def test_phones(self):

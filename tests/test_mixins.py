@@ -56,12 +56,9 @@ class EnRuExpressionsTestCommon(object):
         test('foo {0} foo'.format(NDASH), 'foo{0}foo'.format(MDASH_PAIR))
         return test
 
-    def test_sprime(self):
-        test = self.typus('sprime')
+    def test_primes(self):
+        test = self.typus('primes')
         test('4\'', '4' + SPRIME)
-
-    def test_dprime(self):
-        test = self.typus('dprime')
         test('4"', '4' + DPRIME)
         test('" 22"', '" 22' + DPRIME)
         return test
@@ -135,8 +132,8 @@ class EnRuExpressionsTestCommon(object):
                 test('3 {0} 3'.format(option), '3 {0} 3'.format(result))
                 test('x {0} 3'.format(option), 'x {0} 3'.format(result))
 
-    def test_abbr(self):
-        test = self.typus('abbr')
+    def test_abbrs(self):
+        test = self.typus('abbrs')
         test('т. д.', 'т.{0}д.'.format(NBSP))
         test('т.д.', 'т.{0}д.'.format(NBSP))
         test('т.п.', 'т.{0}п.'.format(NBSP))
@@ -215,6 +212,6 @@ class EnRuExpressionsTest(EnRuExpressionsTestCommon, unittest2.TestCase):
         test('444 -', '444{0}-'.format(NBSP))
         test('4444444 foo', '4444444 foo')
 
-    def test_dprime(self):
-        test = super(EnRuExpressionsTest, self).test_dprime()
+    def test_primes(self):
+        test = super(EnRuExpressionsTest, self).test_primes()
         test('"4"', '"4"')
