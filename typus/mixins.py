@@ -23,7 +23,7 @@ class EnRuExpressions(object):
     expressions = (
         'spaces linebreaks complex_symbols mdash sprime dprime phones '
         'digit_spaces pairs units ranges vulgar_fractions math ruble abbr '
-        'positional_spaces'
+        'rep_positional_spaces del_positional_spaces'
     ).split()
 
     # Any unicode word
@@ -40,10 +40,14 @@ class EnRuExpressions(object):
         '/=': '≠',
         '(r)': '®',
         '(c)': '©',
+        '(p)': '℗',
         '(tm)': '™',
+        '(sm)': '℠',
         # cyrillic
         '(с)': '©',
+        '(р)': '℗',
         '(тм)': '™',
+
     }
 
     vulgar_fractions = {
@@ -69,14 +73,18 @@ class EnRuExpressions(object):
     }
 
     # Not need to put >=, +-, etc, after expr_complex_symbols
-    math_operators = (r'[\-{0}\*xх{1}\+\=±≤≥≠÷\/]'.format(MINUS, TIMES))
+    math_operators = r'[\-{0}\*xх{1}\+\=±≤≥≠÷\/]'.format(MINUS, TIMES)
 
-    positional_spaces = {
+    rep_positional_spaces = {
         # No need to put vulgar fractions in here because of expr_digit_spaces
         # which joins digits and words afterward
         'after': '←$€£%±≤≥≠{0}{1}©'.format(MINUS, TIMES),
         'both': '&',
-        'before': '₽→®™' + MDASH,
+        'before': '₽→' + MDASH,
+    }
+
+    del_positional_spaces = {
+        'before': '®℗™℠:,.?!…',
     }
 
     # Adds space before ruble
@@ -222,12 +230,28 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def expr_positional_spaces(self):
-        both = self.positional_spaces['both']
-        before = re.escape(self.positional_spaces['before'] + both)
-        after = re.escape(self.positional_spaces['after'] + both)
-        expr = (
-            (r'{0}+([{1}])'.format(WHSP, before), NBSP + r'\1'),
-            (r'([{1}]){0}+'.format(WHSP, after), r'\1' + NBSP),
-        )
+    def _positional_spaces(self, data, find, replace):
+        both = data.get('both', '')
+        before = re.escape(data.get('before', '') + both)
+        after = re.escape(data.get('after', '') + both)
+        expr = []
+        if before:
+            expr.append((r'{0}+(?=[{1}])'.format(find, before), replace))
+        if after:
+            expr.append((r'(?<=[{1}]){0}+'.format(find, after), replace))
+        return expr
+
+    def expr_rep_positional_spaces(self):
+        """
+        Replaces whitespaces after or before character
+        with non-breakable space.
+        """
+        expr = self._positional_spaces(self.rep_positional_spaces, WHSP, NBSP)
+        return expr
+
+    def expr_del_positional_spaces(self):
+        """
+        Deletes any spaces before or after character.
+        """
+        expr = self._positional_spaces(self.del_positional_spaces, ANYSP, '')
         return expr

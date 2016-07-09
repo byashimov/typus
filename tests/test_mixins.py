@@ -154,20 +154,26 @@ class EnRuExpressionsTestCommon(object):
         test('111 руб.', '111{0}₽'.format(NBSP))
         return test
 
-    def test_positional_spaces(self):
-        test = self.typus('positional_spaces')
+    def _positional_spaces(self, attr, find, replace):
+        test = self.typus(attr)
 
         result = {
-            'after': 'foo {{0}}{0}bar'.format(NBSP),
-            'both': 'foo{0}{{0}}{0}bar'.format(NBSP),
-            'before': 'foo{0}{{0}} bar'.format(NBSP),
+            'after': 'foo {0}_bar',
+            'both': 'foo_{0}_bar',
+            'before': 'foo_{0} bar',
         }
 
-        for direction, chars in EnRuExpressions.positional_spaces.items():
+        for direction, chars in getattr(EnRuExpressions, attr).items():
             pattern = result[direction]
             for char in chars:
                 string = pattern.format(char)
-                test(string.replace(NBSP, WHSP), string)
+                test(string.replace('_', find), string.replace('_', replace))
+
+    def test_rep_positional_spaces(self):
+        self._positional_spaces('rep_positional_spaces', WHSP, NBSP)
+
+    def test_del_positional_spaces(self):
+        self._positional_spaces('del_positional_spaces', WHSP, '')
 
 
 class EnRuExpressionsTest(EnRuExpressionsTestCommon, unittest2.TestCase):
