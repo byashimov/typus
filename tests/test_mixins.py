@@ -107,6 +107,8 @@ class EnRuExpressionsTestCommon(object):
         test = self.typus('ranges')
         test('25-foo', '25-foo')
         test('2-3', '2{0}3'.format(MDASH))
+        test('2,5-3', '2,5{0}3'.format(MDASH))
+        test('0.5-3', '0.5{0}3'.format(MDASH))
         return test
 
     def test_complex_symbols(self):
@@ -197,11 +199,22 @@ class EnRuExpressionsTest(EnRuExpressionsTestCommon, unittest2.TestCase):
         test('2-3 foo', '2{0}3 foo'.format(MDASH))
         test('(15-20 items)', '(15{0}20 items)'.format(MDASH))
 
+        # Float
+        test('0,5-3', '0,5{0}3'.format(MDASH))
+        test('-0,5-3', '-0,5{0}3'.format(MDASH))
+        test('-5.5-3', '-5.5{0}3'.format(MDASH))
+        test('-5,5-3', '-5,5{0}3'.format(MDASH))
+        test('-5,5-3.5', '-5,5{0}3.5'.format(MDASH))
+
         # Skips
         test('2 - 3', '2 - 3')
         test('2-3 x 4', '2-3 x 4')
         test('2-3 * 4', '2-3 * 4')
         test('2-3 - 4', '2-3 - 4')
+
+        # Left is less than or equal to right
+        test('3-2', '3-2')
+        test('3-3', '3-3')
 
     def test_pairs(self):
         test = super(EnRuExpressionsTest, self).test_pairs()

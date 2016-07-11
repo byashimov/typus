@@ -230,15 +230,28 @@ class EnRuExpressions(object):
     def expr_ranges(self):
         """
         Replaces dash with mdash in ranges.
+        Supports float and negative values.
         Tries to not mess with minus: skips if any math operator or word
-        was found after dash.
-        **NOTE**: _range_ should not have spaces between dash: `2-3`.
+        was found after dash: 3-2=1, 24-pin.
+        **NOTE**: _range_ should not have spaces between dash: `2-3` and
+        left side should be less than right side.
         """
 
+        def ufloat(string):
+            return float(string.replace(',', '.'))
+
+        def replace(match):
+            left, dash, right = match.groups()
+            if ufloat(left) < ufloat(right):
+                dash = MDASH
+            return '{0}{1}{2}'.format(left, dash, right)
+
         expr = (
-            (r'\b(\d+)\-(?!(?:\d+{0}+{1}|{2}))'
+            (r'(-?(?:[0-9]+[\.,][0-9]+|[0-9]+))(-)'
+             r'([0-9]+[\.,][0-9]+|[0-9]+)'
+             r'(?!{0}+{1}|{2})'
              .format(ANYSP, self.math_operators, self.words),
-             r'\1{0}'.format(MDASH)),
+             replace),
         )
         return expr
 

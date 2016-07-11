@@ -51,6 +51,13 @@ class SummaryTest(unittest2.TestCase, EnRuExpressionsTestCommon):
         test('2-3 foo', '2{1}3{0}foo'.format(NBSP, MDASH))  # + ranges
         test('(15-20 items)', '(15{1}20{0}items)'.format(NBSP, MDASH))
 
+        # Float
+        test('0,5-3', '0,5{0}3'.format(MDASH))
+        test('-0,5-3', '{1}0,5{0}3'.format(MDASH, MINUS))
+        test('-5.5-3', '{1}5.5{0}3'.format(MDASH, MINUS))
+        test('-5,5-3', '{1}5,5{0}3'.format(MDASH, MINUS))
+        test('-5,5-3.5', '{1}5,5{0}3.5'.format(MDASH, MINUS))
+
         # Fails to math
         test('2 - 3', '2{0}{1}{0}3'.format(NBSP, MINUS))
         test('2-3 x 4', '2{1}3{0}{2}{0}4'.format(NBSP, MINUS, TIMES))
@@ -64,18 +71,18 @@ class SummaryTest(unittest2.TestCase, EnRuExpressionsTestCommon):
                 # -3, 3-3, 3 - 3, x - 3
                 if result == MINUS:
                     # This one clashes with range
-                    test('3{0}3'.format(option), '3{0}3'.format(MDASH))
+                    test('2{0}3'.format(option), '2{0}3'.format(MDASH))
                     # This one clashes with mdash
                     test('x{0}{1}{0}3'.format(NBSP, option),
                          'x{0}{1} 3'.format(NBSP, MDASH))
                 else:
-                    test('3{0}3'.format(option), '3{0}3'.format(result))
+                    test('2{0}3'.format(option), '2{0}3'.format(result))
                     test('x{0}{1}{0}3'.format(NBSP, option),
                          'x{0}{1}{0}3'.format(NBSP, result))
 
                 test(option + '3', result + '3')
-                test('3{0}{1}{0}3'.format(NBSP, option),
-                     '3{0}{1}{0}3'.format(NBSP, result))
+                test('3{0}{1}{0}2'.format(NBSP, option),
+                     '3{0}{1}{0}2'.format(NBSP, result))
 
     def test_pairs(self):
         test = super(SummaryTest, self).test_pairs()
