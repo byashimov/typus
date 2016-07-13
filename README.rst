@@ -1,7 +1,7 @@
 Typus
 =====
 
-Typus is a typography tool.
+Typus is a typography tool. Try out the demo_.
 
 
 Disclaimer
@@ -35,7 +35,7 @@ Use it:
 Documentation
 -------------
 
-Coming soon.
+Coming soon. If you speak Russian or know Google Translate, you may find `this article`_ quite helpful.
 
 
 Compatibility
@@ -50,3 +50,6 @@ Compatibility
     :target: https://codecov.io/gh/byashimov/typus
 
 Tested on py 2.5, 2.6, 2.7, 3.3, 3.4, 3.5 and probably others, please run the tests if your version is not on list.
+
+.. _demo: https://byashimov.com/typus/
+.. _this article: https://habrahabr.ru/post/303608/
