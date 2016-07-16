@@ -21,8 +21,8 @@ class RuQuotes(object):
 
 class EnRuExpressions(object):
     expressions = (
-        'spaces linebreaks complex_symbols mdash primes phones digit_spaces '
-        'pairs units ranges vulgar_fractions math ruble abbrs '
+        'spaces linebreaks apostrophe complex_symbols mdash primes phones '
+        'digit_spaces pairs units ranges vulgar_fractions math ruble abbrs '
         'rep_positional_spaces del_positional_spaces'
     ).split()
 
@@ -113,6 +113,22 @@ class EnRuExpressions(object):
         expr = (
             (r'\r\n', '\n'),
             (r'\n{2,}', '\n' * 2),
+        )
+        return expr
+
+    def expr_apostrophe(self):
+        """
+        Replaces single quote with apostrophe.
+
+        >>> ru_typus("She'd, I'm, it's, don't, you're, he'll, 90's")
+        She’d, I’m, it’s, don’t, you’re, he’ll, 90’s
+
+        .. note::
+            It works with any omitted word, but then again why not?
+        """
+
+        expr = (
+            (r'(?<={0}|[0-9])\'(?={0})'.format(self.words), RSQUO),
         )
         return expr
 

@@ -129,7 +129,7 @@ class SummaryTest(unittest2.TestCase, EnRuExpressionsTestCommon):
             'сфера масштабирует фотон, ±2_мм изменяя привычную_≡_реальность. '
             'Силовое ×3_поле −3_реально 3_×_2_≠_6 3×3 восстанавливает '
             'трансцендентальный 3″ 2′ принцип 1000_₽ восприятия.'
-            '«…„test“» ©_m&m\'s'
+            '«…„test“» ©_m&m’s'
         ).replace('_', NBSP)
         test(text, result)
 

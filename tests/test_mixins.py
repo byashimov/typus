@@ -28,7 +28,8 @@ class EnRuExpressionsTestCommon(object):
     def test_names(self):
         # Makes sure all tests are exist
         for name in EnRuExpressions.expressions:
-            self.assertTrue(hasattr(self, 'test_' + name))
+            self.assertTrue(hasattr(self, 'test_' + name),
+                            '`{0}` test not found.'.format(name))
 
     def test_spaces(self):
         test = self.typus('spaces')
@@ -40,6 +41,17 @@ class EnRuExpressionsTestCommon(object):
         test('a\r\nb', 'a\nb')
         test('a{0}b'.format('\n' * 5), 'a\n\nb')
         test('a\n\n\r\nb', 'a\n\nb')
+
+    def test_apostrophe(self):
+        test = self.typus('apostrophe')
+        test('She\'d', 'She{0}d'.format(RSQUO))
+        test('I\'m', 'I{0}m'.format(RSQUO))
+        test('it\'s', 'it{0}s'.format(RSQUO))
+        test('don\'t', 'don{0}t'.format(RSQUO))
+        test('you\'re', 'you{0}re'.format(RSQUO))
+        test('he\'ll', 'he{0}ll'.format(RSQUO))
+        test('90\'s', '90{0}s'.format(RSQUO))
+        test('Карло\'s', 'Карло{0}s'.format(RSQUO))
 
     def test_mdash(self):
         test = self.typus('mdash')
