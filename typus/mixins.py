@@ -38,6 +38,7 @@ class EnRuExpressions(object):
         '<=': '≤',
         '>=': '≥',
         '/=': '≠',
+        '==': '≡',
         '(r)': '®',
         '(c)': '©',
         '(p)': '℗',
@@ -79,7 +80,7 @@ class EnRuExpressions(object):
         # No need to put vulgar fractions in here because of expr_digit_spaces
         # which joins digits and words afterward
         'after': '←$€£%±≤≥≠{0}{1}©'.format(MINUS, TIMES),
-        'both': '&',
+        'both': '&≡',
         'before': '₽→' + MDASH,
     }
 
