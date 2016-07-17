@@ -79,8 +79,8 @@ class EnRuExpressions(object):
     rep_positional_spaces = {
         # No need to put vulgar fractions in here because of expr_digit_spaces
         # which joins digits and words afterward
-        'after': '←$€£%±≤≥≠{0}{1}©'.format(MINUS, TIMES),
-        'both': '&≡',
+        'after': '←$€£%±{0}{1}©§¶№'.format(MINUS, TIMES),
+        'both': '&≡≤≥≠',
         'before': '₽→' + MDASH,
     }
 
