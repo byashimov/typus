@@ -79,8 +79,9 @@ class EscapeHtml(EscapePhrases):
     """
 
     placeholder = '{{#html{0}#}}'
+    skiptags = 'head|iframe|pre|code|script|style|video|audio|canvas'
     patterns = (
-        re_compile(r'(<)(head|iframe|pre|code|script|style)(.*?>.*?</\2>)'),
+        re_compile(r'(<)({0})(.*?>.*?</\2>)'.format(skiptags)),
         # Doctype, xml, closing tag, any tag
         re_compile(r'(<[\!\?/]?[a-z]+.*?>)'),
         # Comments
