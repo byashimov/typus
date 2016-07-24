@@ -9,10 +9,10 @@ from typus import TypusCore, ru_typus
 
 
 class TypusTest(unittest2.TestCase):
-    @mock.patch('typus.ru_typus.chained_procs')
-    def test_empty(self, mock_chained_procs):
+    @mock.patch('typus.ru_typus.process')
+    def test_empty(self, mock_process):
         self.assertEqual(ru_typus(''), '')
-        mock_chained_procs.assert_not_called()
+        mock_process.assert_not_called()
 
     def test_debug(self):
         self.assertEqual(ru_typus('2mm', debug=True), '2_mm')
