@@ -136,15 +136,22 @@ class TypoQuotes(unittest2.TestCase):
         testus = self.Testus()
         return lambda text, test: self.assertEqual(testus(text), test)
 
-    @mock.patch('typus.processors.TypoQuotes.fix_nesting',
+    @mock.patch('typus.processors.TypoQuotes.switch_nested',
                 return_value='test')
-    def test_fix_nesting_call(self, mock_fix_nesting):
+    def test_switch_nested_call(self, mock_switch_nested):
         test = self.Testus()
-        test('00 "11" 00')
-        mock_fix_nesting.assert_not_called()
 
+        # No quotes
+        test('00 11 00')
+        mock_switch_nested.assert_not_called()
+
+        # Odd only
+        test('00 "11" 00')
+        mock_switch_nested.assert_not_called()
+
+        # Both
         test('"00 "11" 00"')
-        mock_fix_nesting.assert_called_once()
+        mock_switch_nested.assert_called_once()
 
     def test_quotes(self):
         test = self.typus()

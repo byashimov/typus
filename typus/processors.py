@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
@@ -104,7 +102,7 @@ class EscapeHtml(EscapePhrases):
 
 class TypoQuotes(BaseProcessor):
     """
-    Replaces regular quotes with typographic ones.
+    Replaces regular quotes with typographic.
     Supports any level nesting, but doesn't work well with minutes (1')
     and inches (1") within quotes, that kind of cases are ignored.
     """
@@ -116,13 +114,17 @@ class TypoQuotes(BaseProcessor):
         self.loq, self.roq = self.typus.loq, self.typus.roq
         self.leq, self.req = self.typus.leq, self.typus.req
 
+        # Pairs of odd and even quotes. Already *switched* in one dimension.
+        # See :meth:`switch_nested` for more help.
+        self.switch = (self.loq + self.req, self.leq + self.roq)
+
         # Replaces all quotes with `"`
         quotes = ''.join((LSQUO, RSQUO, LDQUO, RDQUO, DLQUO, LAQUO, RAQUO))
         self.re_normalize = re_compile(r'[{0}]'.format(quotes))
 
         # Matches nested quotes (with no quotes within)
         # and replaces with odd level quotes
-        self.re_pairs = re_compile(
+        self.re_normal = re_compile(
             # No words before
             r'(?<!\w)'
             # Starts with quote
@@ -136,11 +138,10 @@ class TypoQuotes(BaseProcessor):
             # No words afterwards
             r'(?!\w)'
         )
-        self.re_pairs_replace = r'{0}\2{1}'.format(self.loq, self.roq)
+        self.re_normal_replace = r'{0}\2{1}'.format(self.loq, self.roq)
 
-        # Matches to typo quotes
-        self.re_typo_quotes = re_compile(r'({0}|{1}|[^{0}{1}]+)'
-                                         .format(self.loq, self.roq))
+        # Matches with typo quotes
+        self.re_nested = re_compile(r'({0}|{1})'.format(self.loq, self.roq))
 
     def __call__(self, func):
         @wraps(self, updated=())
@@ -150,39 +151,43 @@ class TypoQuotes(BaseProcessor):
 
             # Replaces normalized quotes with first level ones, starting
             # from inner pairs, moves to sides
-            nested = -1
+            nested = 0
             while True:
-                normalized, replaced = self.re_pairs.subn(
-                    self.re_pairs_replace, normalized)
+                normalized, replaced = self.re_normal.subn(
+                    self.re_normal_replace, normalized)
                 if not replaced:
                     break
                 nested += 1
 
             # Saves some cpu :)
             # Most cases are about just one level quoting
-            if not nested:
+            if nested < 2:
                 return func(normalized, *args, **kwargs)
 
             # At this point all quotes are of odd type, have to fix it
-            fixed = self.fix_nesting(normalized)
-            return func(fixed, *args, **kwargs)
+            switched = self.switch_nested(normalized)
+            return func(switched, *args, **kwargs)
         return inner
 
-    def fix_nesting(self, normalized):
-        # Toggles quotes for any other nesting pair
-        pairs = cycle((self.loq + self.roq, self.leq + self.req))
-        quoted, pair = '', None
+    def switch_nested(self, text):
+        """
+        Switches nested quotes to *other* type.
+        This function stored in a separate method to make possible it to mock
+        in tests to make sure it doesn't called without special need.
+        """
 
-        for match in self.re_typo_quotes.finditer(normalized):
-            chunk = match.group(0)
-            if chunk == self.loq:
-                pair = next(pairs)
-                chunk = pair[0]
-            elif chunk == self.roq:
-                chunk = pair[1]
-                pair = next(pairs)
-            quoted += chunk
-        return quoted
+        # Stores a cycled pairs of possible quotes. Every other loop it's
+        # switched to provide *next* type of a given quote
+        quotes = cycle(self.switch)
+
+        def replace(match):
+            # Since only odd quotes are matched, comparison is the way to
+            # choose whether it's left or right one of type should be returned.
+            # As the first quote is the left one, makes negative equal which
+            # return false, i.e. zero index
+            return next(quotes)[match.group() != self.loq]
+
+        return self.re_nested.sub(replace, text)
 
 
 class Expressions(BaseProcessor):
