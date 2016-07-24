@@ -131,7 +131,7 @@ class TypoQuotes(BaseProcessor):
             r'(["\'])'
             r'(?!\s)'
             # Everything but quote inside
-            r'([^\1]+?)'
+            r'((?!\1).+?)'
             r'(?!\s)'
             # Ends with same quote from the beginning
             r'\1'
@@ -186,7 +186,6 @@ class TypoQuotes(BaseProcessor):
             # As the first quote is the left one, makes negative equal which
             # return false, i.e. zero index
             return next(quotes)[match.group() != self.loq]
-
         return self.re_nested.sub(replace, text)
 
 

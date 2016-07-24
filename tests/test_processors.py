@@ -170,6 +170,8 @@ class TypoQuotes(unittest2.TestCase):
         test('"test"*', '«test»*')
         test('"test"®', '«test»®')
         test('"""test"""', '«„«test»“»')
+        test('""""test""""', '«„«„test“»“»')
+        test('"""""""test"""""""', '«„«„«„«test»“»“»“»')
         test('" test"', '" test"')
         test('" "test""', '" «test»"')
         test('"foo 2\'"', '«foo 2\'»')
