@@ -80,7 +80,7 @@ def map_choices(data, group=r'({0})', dict_class=idict):
     pattern = group.format(choices)
 
     def replace(match):
-        key = match.group(0)
+        key = match.group()
         return str(options[key])
     return pattern, replace
 
