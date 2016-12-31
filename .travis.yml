@@ -1,19 +1,19 @@
 sudo: false
 language: python
-python: 3.5
-env:
-  matrix:
-    - TOXENV=py26
-    - TOXENV=py27
-    - TOXENV=py33
-    - TOXENV=py34
-    - TOXENV=py35
+python:
+  - "2.6"
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6-dev"
 cache:
   directories:
     - $HOME/.cache/pip
 install:
-  - pip install tox codecov
+  - travis_retry pip install tox-travis codecov
 script:
+  - python --version
   - tox
 after_success:
   - coverage report

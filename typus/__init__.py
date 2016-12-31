@@ -1,10 +1,22 @@
-from .base import TypusBase
-from .mixins import EnRuExpressions, RuQuotes
-from .processors import EscapeHtml, EscapePhrases, TypoQuotes, Expressions
+from .core import TypusCore
+from .mixins import EnQuotes, EnRuExpressions, RuQuotes
+from .processors import EscapeHtml, EscapePhrases, Expressions, Quotes
 
 
-class Typus(RuQuotes, EnRuExpressions, TypusBase):
-    processors = (EscapePhrases, EscapeHtml, TypoQuotes, Expressions)
+class BaseTypus(EnRuExpressions, TypusCore):
+    processors = (EscapePhrases, EscapeHtml, Quotes, Expressions)
 
 
-typus = Typus()
+class EnTypus(EnQuotes, BaseTypus):
+    """
+    TODO:
+    """
+
+
+class RuTypus(RuQuotes, BaseTypus):
+    """
+    TODO:
+    """
+
+
+en_typus, ru_typus = EnTypus(), RuTypus()

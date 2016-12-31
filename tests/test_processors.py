@@ -3,31 +3,33 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import unittest
+import os
 from builtins import *  # noqa
 
 import mock
 import requests
-from typus import Typus, typus
+import unittest2
+from typus import RuTypus, ru_typus
+from typus.core import TypusCore
 from typus.processors import BaseProcessor
 
 
-class BaseProcessorTest(unittest.TestCase):
+class BaseProcessorTest(unittest2.TestCase):
     def test_base(self):
         class TestProcessor(BaseProcessor):
             "Empty processor with no __call__"
 
-        class Testus(Typus):
+        class Testus(TypusCore):
             processors = (TestProcessor, )
 
         with self.assertRaises(NotImplementedError):
             Testus()
 
 
-class EscapePhrasesTest(unittest.TestCase):
+class EscapePhrasesTest(unittest2.TestCase):
     def typus(self):
         def inner(text, test, *args):
-            self.assertEqual(typus(text, escape_phrases=args), test)
+            self.assertEqual(ru_typus(text, escape_phrases=args), test)
         return inner
 
     def test_escaping(self):
@@ -40,18 +42,21 @@ class EscapePhrasesTest(unittest.TestCase):
              '<code>dsfsdf <code>"test"</code> "sdfdf"</code>',
              '<code>"test"</code>')
 
+        # Empty string, nothing to escape
+        test('"foo"', '«foo»', '')
 
-class EscapeHtmlTest(unittest.TestCase):
+
+class EscapeHtmlTest(unittest2.TestCase):
     def typus(self):
-        return lambda text, test: self.assertEqual(typus(text), test)
+        return lambda text, test: self.assertEqual(ru_typus(text), test)
 
-    @mock.patch('typus.processors.EscapeHtml.restore_values',
+    @mock.patch('typus.processors.EscapeHtml._restore_values',
                 return_value='test')
     def test_restore_html_call(self, mock_restore_values):
-        typus('test')
+        ru_typus('test')
         mock_restore_values.assert_not_called()
 
-        typus('<code>test</code>')
+        ru_typus('<code>test</code>')
         mock_restore_values.assert_called_once()
 
     def test_codeblocks(self):
@@ -110,11 +115,12 @@ class EscapeHtmlTest(unittest.TestCase):
         test('<iframe height="500" width="500">(c)</iframe>',
              '<iframe height="500" width="500">(c)</iframe>')
 
+    @unittest2.skipIf(os.getenv('TYPUS_SKIP_W3_TEST'), 'Leave for CI')
     def test_html_page(self):
         # It's almost blind test
         url = 'https://validator.w3.org/nu/'
         html_page = requests.get(url)
-        processed = typus(html_page.text)
+        processed = ru_typus(html_page.text)
         validator = requests.post(url + '?out=json',
                                   processed.encode('utf8'),
                                   headers={'content-type': 'text/html; '
@@ -122,23 +128,30 @@ class EscapeHtmlTest(unittest.TestCase):
         self.assertEqual(validator.json(), {'messages': []})
 
 
-class TypoQuotes(unittest.TestCase):
-    class Testus(Typus):
+class Quotes(unittest2.TestCase):
+    class Testus(RuTypus):
         expressions = ''
 
     def typus(self):
         testus = self.Testus()
         return lambda text, test: self.assertEqual(testus(text), test)
 
-    @mock.patch('typus.processors.TypoQuotes.fix_nesting',
+    @mock.patch('typus.processors.Quotes._switch_nested',
                 return_value='test')
-    def test_fix_nesting_call(self, mock_fix_nesting):
+    def test_switch_nested_call(self, mock_switch_nested):
         test = self.Testus()
-        test('00 "11" 00')
-        mock_fix_nesting.assert_not_called()
 
+        # No quotes
+        test('00 11 00')
+        mock_switch_nested.assert_not_called()
+
+        # Odd only
+        test('00 "11" 00')
+        mock_switch_nested.assert_not_called()
+
+        # Both
         test('"00 "11" 00"')
-        mock_fix_nesting.assert_called_once()
+        mock_switch_nested.assert_called_once()
 
     def test_quotes(self):
         test = self.typus()
@@ -157,6 +170,8 @@ class TypoQuotes(unittest.TestCase):
         test('"test"*', '«test»*')
         test('"test"®', '«test»®')
         test('"""test"""', '«„«test»“»')
+        test('""""test""""', '«„«„test“»“»')
+        test('"""""""test"""""""', '«„«„«„«test»“»“»“»')
         test('" test"', '" test"')
         test('" "test""', '" «test»"')
         test('"foo 2\'"', '«foo 2\'»')

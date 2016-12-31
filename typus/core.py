@@ -1,41 +1,34 @@
-# coding: utf-8
-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from builtins import *  # noqa
 from functools import update_wrapper
 
-from .chars import NBSP
+from .chars import NBSP, NNBSP
+from .utils import re_compile
+
+__all__ = ('TypusCore', )
 
 
-class TypusBase(object):
+class TypusCore(object):
     """
-    Typographer base
+    This class makes :mod:`typus.processors` and :mod:`typus.mixins` work
+    together.
     """
 
     processors = ()
     expressions = ()
+    re_nbsp = re_compile('[{0}{1}]'.format(NBSP, NNBSP))
 
     def __init__(self):
         assert self.processors
 
         # Makes possible to decorate Typus.
-        # updated=() skips __dic__ attribute
+        # updated=() skips __dict__ attribute
         update_wrapper(self, self.__class__, updated=())
 
-        def tail(text, *args, **kwargs):
-            """
-            Tail function to close the chain of processors
-            """
-            return text
-
-        # Makes chain of processors by passing one to next one
-        processors = (p(self) for p in reversed(self.processors))
-        for proc in processors:
-            tail = proc(tail)
-
-        self.chained_procs = tail
+        # Chains all processors into one single function
+        self.process = sum(p(self) for p in reversed(self.processors))
 
     def __call__(self, text, debug=False, *args, **kwargs):
         text = text.strip()
@@ -43,9 +36,9 @@ class TypusBase(object):
             return ''
 
         # All the magic
-        text = self.chained_procs(text, *args, **kwargs)
+        text = self.process(text, *args, **kwargs)
 
         # Makes nbsp visible
         if debug:
-            return text.replace(NBSP, '_')
+            return self.re_nbsp.sub('_', text)
         return text

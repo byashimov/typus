@@ -3,8 +3,9 @@
 from __future__ import unicode_literals
 
 NBSP = '\u00A0'
+NNBSP = '\u202F'
 WHSP = ' '
-ANYSP = r'[{}{}]'.format(WHSP, NBSP)
+ANYSP = r'[{0}{1}{2}]'.format(WHSP, NBSP, NNBSP)
 
 NDASH = '–'
 MDASH = '—'
