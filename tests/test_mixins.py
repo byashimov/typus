@@ -148,14 +148,13 @@ class EnRuExpressionsTestCommon(object):
 
     def test_abbrs(self):
         test = self.typus('abbrs')
-        test('т. д.', 'т.{0}д.'.format(NBSP))
-        test('т.д.', 'т.{0}д.'.format(NBSP))
-        test('т.п.', 'т.{0}п.'.format(NBSP))
-        test('т. ч.', 'т.{0}ч.'.format(NBSP))
-        test('т.е.', 'т.{0}е.'.format(NBSP))
-        test('Пушкин А.С.', 'Пушкин А.{0}С.'.format(NBSP))
-        test('А.С. Пушкин', 'А.{0}С.{0}Пушкин'.format(NBSP))
-        test('А.С.Пушкин', 'А.{0}С.{0}Пушкин'.format(NBSP))
+        test('т. д.', 'т.{0}д.'.format(NNBSP))
+        test('т.д.', 'т.{0}д.'.format(NNBSP))
+        test('т.п.', 'т.{0}п.'.format(NNBSP))
+        test('т. ч.', 'т.{0}ч.'.format(NNBSP))
+        test('т.е.', 'т.{0}е.'.format(NNBSP))
+        test('Пушкин А.С.', 'Пушкин А.{0}С.'.format(NNBSP))
+        test('А.С. Пушкин', 'А.{0}С.{1}Пушкин'.format(NNBSP, NBSP))
 
     def test_ruble(self):
         test = self.typus('ruble')

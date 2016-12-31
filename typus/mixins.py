@@ -302,11 +302,13 @@ class EnRuExpressions(object):
 
     def expr_abbrs(self):
         """
-        Adds non-breakable space and replaces whitespaces between
+        Adds narrow non-breakable space and replaces whitespaces between
         shorten words.
         """
 
         expr = (
+            (r'\b({1}\.){0}*({1}\.)'.format(ANYSP, self.words),
+             r'\1{0}\2'.format(NNBSP)),
             (r'\b({1}\.){0}*(?={1})'.format(WHSP, self.words),
              r'\1{0}'.format(NBSP)),
         )

@@ -4,7 +4,8 @@ from __future__ import (absolute_import, division, print_function,
 from builtins import *  # noqa
 from functools import update_wrapper
 
-from .chars import NBSP
+from .chars import NBSP, NNBSP
+from .utils import re_compile
 
 __all__ = ('TypusCore', )
 
@@ -16,6 +17,7 @@ class TypusCore(object):
 
     processors = ()
     expressions = ()
+    re_nbsp = re_compile('[{0}{1}]'.format(NBSP, NNBSP))
 
     def __init__(self):
         assert self.processors
@@ -37,5 +39,5 @@ class TypusCore(object):
 
         # Makes nbsp visible
         if debug:
-            return text.replace(NBSP, '_')
+            return self.re_nbsp.sub('_', text)
         return text
