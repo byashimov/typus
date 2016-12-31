@@ -226,8 +226,8 @@ class EnRuExpressions(object):
         expr = (
             # Unions, units and all that small staff
             (r'\b({1}{{1,2}}){0}+'.format(WHSP, self.words), r'\1' + NBSP),
-            # Fixes previous with leading dash or ellipsis
-            (r'([-…]{1}{{1,2}}){0}'.format(NBSP, self.words), r'\1' + WHSP),
+            # Fixes previous with leading dash, ellipsis or apostrophe
+            (r'([-…’]{1}{{1,2}}){0}'.format(NBSP, self.words), r'\1' + WHSP),
         )
         return expr
 

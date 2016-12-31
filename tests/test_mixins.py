@@ -94,6 +94,7 @@ class EnRuExpressionsTestCommon(object):
         test('aaa aaa', 'aaa aaa')
         test('aaa-aa aa', 'aaa-aa aa')  # important check -- dash and 2 letters
         test('aaa aa', 'aaa aa')
+        test('I’ll check', 'I’ll check')
         test('a aa a', 'a{0}aa{0}a'.format(NBSP))
         return test
 
