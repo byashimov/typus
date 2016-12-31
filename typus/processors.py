@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
@@ -17,8 +19,7 @@ def tail_processor(text, *args, **kwargs):
 
 class BaseProcessor(object):
     """
-    Processors are simple python decorators, except they are initiated
-    and stored within Typus instance.
+    Processors are the core of Typus. See subclasses for examples.
     """
 
     def __init__(self, typus):
@@ -38,6 +39,12 @@ class BaseProcessor(object):
 class EscapePhrases(BaseProcessor):
     """
     Escapes phrases which should never be processed.
+
+    >>> en_typus('Typus turns `(c)` into "(c)"', escape_phrases=['`(c)`'])
+    'Typus turns `(c)` into “©”'
+
+    Also there is a little helper :func:`typus.utils.splinter` which should
+    help you to split string into the phrases.
     """
 
     placeholder = '{{#phrase{0}#}}'
@@ -69,7 +76,7 @@ class EscapePhrases(BaseProcessor):
 
     def _restore_values(self, text, storage, **kwargs):
         """
-        Puts data to the text in reversed order.
+        Puts data into the text in reversed order.
         It's important to loop over and restore text step by step
         because some 'stored' chunks may contain keys to other ones.
         """
@@ -80,9 +87,13 @@ class EscapePhrases(BaseProcessor):
 
 class EscapeHtml(EscapePhrases):
     """
-    Extracts html tags and puts them back after
-    typus processed.
-    Warning: doesn't support nested code tags.
+    Extracts html tags and puts them back after.
+
+    >>> en_typus('Typus turns <code>(c)</code> into "(c)"')
+    'Typus turns <code>(c)</code> into “©”'
+
+    .. caution::
+        Doesn't support nested ``<code>`` tags.
     """
 
     placeholder = '{{#html{0}#}}'
@@ -111,9 +122,15 @@ class EscapeHtml(EscapePhrases):
 
 class Quotes(BaseProcessor):
     """
-    Replaces regular quotes with typographic.
-    Supports any level nesting, but doesn't work well with minutes (1')
-    and inches (1") within quotes, that kind of cases are ignored.
+    Replaces regular quotes with typographic ones.
+    Supports any level nesting, but doesn't work well with minutes ``1'``
+    and inches ``1"`` within the quotes, that kind of cases are ignored.
+    Use it with :class:`typus.mixins.RuQuotes` or
+    :class:`typus.mixins.EnQuotes` or provide Typus attributes
+    ``loq, roq, leq, req`` with custom quotes.
+
+    >>> en_typus('Say "what" again!')
+    'Say “what” again!'
     """
 
     def __init__(self, *args, **kwargs):
@@ -180,8 +197,8 @@ class Quotes(BaseProcessor):
 
     def _switch_nested(self, text):
         """
-        Switches nested quotes to *other* type.
-        This function stored in a separate method to make possible it to mock
+        Switches nested quotes to another type.
+        This function stored in a separate method to make possible to mock it
         in tests to make sure it doesn't called without special need.
         """
 
@@ -199,8 +216,34 @@ class Quotes(BaseProcessor):
 
 
 class Expressions(BaseProcessor):
-    """
-    Provides expressions support.
+    r"""
+    Provides regular expressions support. Looks for ``expressions`` list
+    attribute in Typus with expressions name, compiles and runs them on every
+    Typus call.
+
+    >>> from typus.core import TypusCore
+    >>> from typus.processors import Expressions
+    ...
+    >>> class MyExpressionsMixin:
+    ...     def expr_bold_price(self):
+    ...         expr = (
+    ...             (r'(\$\d+)', r'<b>\1</b>'),
+    ...         )
+    ...         return expr
+    ...
+    >>> class MyTypus(MyExpressionsMixin, TypusCore):
+    ...     expressions = ('bold_price', )  # no prefix `expr_`!
+    ...     processors = (Expressions, )
+    ...
+    >>> my_typus = MyTypus()  # `expr_bold_price` is compiled and stored
+    >>> my_typus('Get now just for $1000!')
+    'Get now just for <b>$1000</b>!'
+
+    .. note::
+        *Expression* is a pair of regex and replace strings. Regex strings are
+        compiled with :func:`typus.utils.re_compile` with a bunch of flags:
+        unicode, case-insensitive, etc. If that doesn't suit for you pass your
+        own flags as a third member of the tuple: ``(regex, replace, re.I)``.
     """
 
     def __init__(self, *args, **kwargs):
