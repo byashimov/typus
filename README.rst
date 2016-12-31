@@ -19,7 +19,7 @@ the font of your choice.
 For instance, there is a tiny non-breakable space between ``A. A.`` you
 can see with Helvetica:
 
-.. image:: example.png
+.. image:: https://raw.githubusercontent.com/byashimov/typus/develop/docs/example.png
 
 
 Installation
@@ -53,13 +53,13 @@ Here is a short example:
     ru_typus('"Красивое лучше, чем уродливое." (с) Тим Петерс.')
     '«Красивое лучше, чем уродливое.» © Тим Петерс.'  # cyrillic 'с' in '(с)'
 
-The only difference between :func:`typus.en_typus` and :func:`typus.ru_typus`
+The only difference between ``en_typus`` and ``ru_typus``
 are in quotes they set: ``“‘’”`` for English and ``«„“»`` for Russian. Both of
 them handle mixed text and that is pretty awesome.
 
 Typus is highly customizable. Not only quotes can be replaced but almost
 everything. For instance, if you don't use html tags you can skip
-:class:`typus.processors.EscapeHtml` processor which makes your Typus a little
+``EscapeHtml`` processor which makes your Typus a little
 faster.
 
 
@@ -103,7 +103,7 @@ Compatibility
     :alt: Codecov
     :target: https://codecov.io/gh/byashimov/typus
 
-Tested on Python 2.5, 2.6, 2.7, 3.3, 3.4, 3.5, 3.6.
+Tested on Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6.
 
 
 Todo
@@ -113,5 +113,4 @@ Todo
 - Add missing doctests.
 
 .. _link: https://habrahabr.ru/post/303608/
-.. _readthedocs.org: https://somewhere.com
-.. _Mixins: https://somewhere.com
+.. _readthedocs.org: http://py-typus.readthedocs.io/en/latest/
