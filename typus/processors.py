@@ -8,6 +8,9 @@ from itertools import count, cycle
 from .chars import DLQUO, LAQUO, LDQUO, LSQUO, RAQUO, RDQUO, RSQUO
 from .utils import re_compile
 
+__all__ = ('EscapePhrases', 'EscapeHtml', 'Quotes', 'Expressions')
+
+
 def tail_processor(text, *args, **kwargs):
     return text
 
