@@ -124,7 +124,7 @@ class Quotes(BaseProcessor):
         # See :meth:`_switch_nested` for more help.
         self.switch = (self.loq + self.req, self.leq + self.roq)
 
-        # Replaces all quotes with `"`
+        # Replaces all quotes with `'`
         quotes = ''.join((LSQUO, RSQUO, LDQUO, RDQUO, DLQUO, LAQUO, RAQUO))
         self.re_normalize = re_compile(r'[{0}]'.format(quotes))
 
@@ -153,7 +153,7 @@ class Quotes(BaseProcessor):
         @wraps(self, updated=())
         def inner(text, *args, **kwargs):
             # Normalizes editor's quotes to double one
-            normalized = self.re_normalize.sub('"', text)
+            normalized = self.re_normalize.sub('\'', text)
 
             # Replaces normalized quotes with first level ones, starting
             # from inner pairs, moves to sides
