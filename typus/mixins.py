@@ -13,15 +13,37 @@ __all__ = ('EnQuotes', 'RuQuotes', 'EnRuExpressions')
 
 
 class EnQuotes(object):
-    # Quotes: left odd, right odd, left even, right even
+    r"""
+    Provides English quotes configutation for :class:`typus.processors.Quotes`
+    processor.
+
+    >>> en_typus('He said "\'Winnie-the-Pooh\' is my favorite book!".')
+    'He said “‘Winnie-the-Pooh’ is my favorite book!”.'
+    """
+
+    # Left odd, right odd, left even, right even
     loq, roq, leq, req = LDQUO, RDQUO, LSQUO, RSQUO
 
 
 class RuQuotes(object):
+    r"""
+    Provides Russian quotes configutation for :class:`typus.processors.Quotes`
+    processor.
+
+    >>> ru_typus('Он сказал: "\'Винни-Пух\' -- моя любимая книга!".')
+    'Он сказал: «„Винни-Пух“ — моя любимая книга!».'
+    """
+
+    # Left odd, right odd, left even, right even
     loq, roq, leq, req = LAQUO, RAQUO, DLQUO, LDQUO
 
 
 class EnRuExpressions(object):
+    """
+    This class holds most of Typus functionality for English and Russian
+    languages. It works with :class:`typus.processors.Expressions`.
+    """
+
     expressions = (
         'spaces linebreaks apostrophe complex_symbols mdash primes phones '
         'digit_spaces pairs units ranges vulgar_fractions math ruble abbrs '
@@ -97,7 +119,12 @@ class EnRuExpressions(object):
         """
         Trims spaces at the beginning and end of the line and remove extra
         spaces within.
-        **NOTE**: Doesn't work correctly with nbsp (replaces with space).
+
+        >>> en_typus('   foo bar  ')
+        'foo bar'
+
+        .. caution::
+            Doesn't work correctly with nbsp (replaces with whitespace).
         """
 
         expr = (
@@ -107,9 +134,12 @@ class EnRuExpressions(object):
         return expr
 
     def expr_linebreaks(self):
-        """
+        r"""
         Converts line breaks to unix-style and removes extra breaks
         if found more than two in a row.
+
+        >>> en_typus('foo\r\nbar\n\n\nbaz')
+        'foo\nbar\n\nbaz'
         """
 
         expr = (
@@ -122,11 +152,11 @@ class EnRuExpressions(object):
         """
         Replaces single quote with apostrophe.
 
-        >>> ru_typus("She'd, I'm, it's, don't, you're, he'll, 90's")
-        She’d, I’m, it’s, don’t, you’re, he’ll, 90’s
+        >>> en_typus("She'd, I'm, it's, don't, you're, he'll, 90's")
+        'She’d, I’m, it’s, don’t, you’re, he’ll, 90’s'
 
         .. note::
-            It works with any omitted word, but then again why not?
+            By the way it works with any omitted word. But then again, why not?
         """
 
         expr = (
@@ -136,8 +166,17 @@ class EnRuExpressions(object):
 
     def expr_complex_symbols(self):
         """
-        Replaces complex symbols with appropriate unicode symbols:
-        `(c)` becomes `©`.
+        Replaces complex symbols with Unicode characters. Doesn't care
+        about case-sensitivity and handles Cyrillic-Latin twins
+        like ``c`` and ``с``.
+
+        >>> en_typus('(c)(с)(C)(r)(R)...')
+        '©©©®®…'
+
+        .. csv-table:: Character map
+            :header: …, ←, →, ±, ≤, ≥, ≠, ≡, ®, ©, ℗, ™, ℠
+
+            ..., <-, ->, +- or +−, <=, >=, /=, ==, (r), (c), (p), (tm), (sm)
         """
 
         expr = (
@@ -148,6 +187,9 @@ class EnRuExpressions(object):
     def expr_mdash(self):
         """
         Replaces dash with mdash.
+
+        >>> en_typus('foo -- bar')  # adds non-breakable space after `foo`
+        'foo\u00A0— bar'
         """
 
         expr = (
@@ -174,10 +216,14 @@ class EnRuExpressions(object):
         return expr
 
     def expr_primes(self):
-        """
-        Replaces quotes with single and double primes.
-        **NOTE**: Won't break "4", but this will " 4", should be used after
-        `quotes`.
+        r"""
+        Replaces quotes with prime after digits.
+
+        >>> en_typus('3\' 5" long')
+        '3′ 5″ long'
+
+        .. caution::
+            Won't break "4", but fails with " 4".
         """
 
         expr = (
@@ -189,10 +235,10 @@ class EnRuExpressions(object):
     def expr_phones(self):
         """
         Replaces dash with ndash in phone numbers which should be a trio of
-        2-4 length digits:
-        888-00-00
-        00-888-00
-        00-00-888
+        2-4 length digits.
+
+        >>> en_typus('111-00-00'), en_typus('00-111-00'), en_typus('00-00-111')
+        ('111–00–00', '00–111–00', '00–00–111')
         """
 
         expr = (
@@ -235,8 +281,10 @@ class EnRuExpressions(object):
 
     def expr_units(self):
         """
-        Puts non-breakable space between digits and units:
-        `1mm` and `1 mm` becomes `1_mm`
+        Puts non-breakable space between digits and units.
+
+        >>> en_typus('1mm', debug=True), en_typus('1mm')
+        ('1_mm', '1 mm')
         """
 
         expr = (
@@ -276,7 +324,10 @@ class EnRuExpressions(object):
 
     def expr_vulgar_fractions(self):
         """
-        Replaces vulgar fractions with appropriate unicode symbols.
+        Replaces vulgar fractions with appropriate unicode characters.
+
+        >>> en_typus('1/2')
+        '½'
         """
 
         expr = (
@@ -288,12 +339,20 @@ class EnRuExpressions(object):
     def expr_math(self):
         """
         Puts minus and multiplication symbols between pair and before
-        single digits:
-        3 - 3 = 0
-        -3 degrees
-        3 × 3 = 9
-        ×3 faster!
-        **NOTE**: Should run after `mdash` and `phones`.
+        single digits.
+
+        >>> en_typus('3 - 3 = 0')
+        '3 − 3 = 0'
+        >>> en_typus('-3 degrees')
+        '−3 degrees'
+        >>> en_typus('3 x 3 = 9')
+        '3 × 3 = 9'
+        >>> en_typus('x3 better!')
+        '×3 better!'
+
+        .. important::
+
+            Should run after `mdash` and `phones` expressions.
         """
 
         expr = (
@@ -320,8 +379,13 @@ class EnRuExpressions(object):
         """
         Replaces `руб` and `р` (with or without dot) after digits
         with ruble symbol.
-        **NOTE**: If pattern found at the end of the sentence this will break
-        things up, because it drops the dot.
+
+        >>> en_typus('1000 р.')
+        '1000 ₽'
+
+        .. caution::
+
+            Drops the dot at the end of sentence if match found in there.
         """
 
         expr = (
