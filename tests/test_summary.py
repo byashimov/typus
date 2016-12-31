@@ -37,6 +37,7 @@ class SummaryTest(unittest2.TestCase, EnRuExpressionsTestCommon):
         test('foo - "11" 00', 'foo{0}«11» 00'.format(MDASH_PAIR))
         test('2 - 2foo', '2{0}2{1}foo'.format(MDASH_PAIR, NBSP))  # + units
         test('2 - 2', '2{0}{1}{0}2'.format(NBSP, MINUS))  # + minus
+        test('Winnie-the-Pooh', 'Winnie-the-Pooh')
 
     def test_primes(self):
         test = super(SummaryTest, self).test_primes()
