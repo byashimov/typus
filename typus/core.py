@@ -12,7 +12,8 @@ __all__ = ('TypusCore', )
 
 class TypusCore(object):
     """
-    Typographer base
+    This class makes :mod:`typus.processors` and :mod:`typus.mixins` work
+    together.
     """
 
     processors = ()
@@ -23,7 +24,7 @@ class TypusCore(object):
         assert self.processors
 
         # Makes possible to decorate Typus.
-        # updated=() skips __dic__ attribute
+        # updated=() skips __dict__ attribute
         update_wrapper(self, self.__class__, updated=())
 
         # Chains all processors into one single function
