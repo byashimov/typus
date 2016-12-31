@@ -1,10 +1,10 @@
 from .core import TypusCore
 from .mixins import EnQuotes, EnRuExpressions, RuQuotes
-from .processors import EscapeHtml, EscapePhrases, Expressions, TypoQuotes
+from .processors import EscapeHtml, EscapePhrases, Expressions, Quotes
 
 
 class BaseTypus(EnRuExpressions, TypusCore):
-    processors = (EscapePhrases, EscapeHtml, TypoQuotes, Expressions)
+    processors = (EscapePhrases, EscapeHtml, Quotes, Expressions)
 
 
 class EnTypus(EnQuotes, BaseTypus):

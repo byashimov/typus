@@ -128,7 +128,7 @@ class EscapeHtmlTest(unittest2.TestCase):
         self.assertEqual(validator.json(), {'messages': []})
 
 
-class TypoQuotes(unittest2.TestCase):
+class Quotes(unittest2.TestCase):
     class Testus(RuTypus):
         expressions = ''
 

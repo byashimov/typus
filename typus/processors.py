@@ -106,7 +106,7 @@ class EscapeHtml(EscapePhrases):
         return inner
 
 
-class TypoQuotes(BaseProcessor):
+class Quotes(BaseProcessor):
     """
     Replaces regular quotes with typographic.
     Supports any level nesting, but doesn't work well with minutes (1')
@@ -114,7 +114,7 @@ class TypoQuotes(BaseProcessor):
     """
 
     def __init__(self, *args, **kwargs):
-        super(TypoQuotes, self).__init__(*args, **kwargs)
+        super(Quotes, self).__init__(*args, **kwargs)
 
         # Odd and even levels: left, right
         self.loq, self.roq = self.typus.loq, self.typus.roq
