@@ -40,7 +40,7 @@ class idict(dict):
 
     .. caution::
         :class:`idict` is not a full-featured case-insensitive dictionary.
-        As it's made for :func:`map_choices` it has limited functionality.
+        As it's made for :func:`map_choices` and has limited functionality.
     """
 
     def __init__(self, obj=None, **kwargs):
