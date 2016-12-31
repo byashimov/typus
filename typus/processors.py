@@ -44,18 +44,18 @@ class EscapePhrases(BaseProcessor):
         def inner(text, *args, **kwargs):
             storage = []
             counter = count()
-            escaped = self.save_values(text, storage, counter, **kwargs)
+            escaped = self._save_values(text, storage, counter, **kwargs)
 
             # Runs typus
             processed = func(escaped, *args, **kwargs)
             if not storage:
                 return processed
 
-            restored = self.restore_values(processed, storage, **kwargs)
+            restored = self._restore_values(processed, storage, **kwargs)
             return restored
         return inner
 
-    def save_values(self, text, storage, counter, escape_phrases=(), **kwargs):
+    def _save_values(self, text, storage, counter, escape_phrases=(), **kwargs):
         for phrase in escape_phrases:
             if not phrase.strip():
                 continue
@@ -64,7 +64,7 @@ class EscapePhrases(BaseProcessor):
             storage.append((key, phrase))
         return text
 
-    def restore_values(self, text, storage, **kwargs):
+    def _restore_values(self, text, storage, **kwargs):
         """
         Puts data to the text in reversed order.
         It's important to loop over and restore text step by step
@@ -92,7 +92,7 @@ class EscapeHtml(EscapePhrases):
         re_compile(r'(<\!\-\-.*?\-\->)'),
     )
 
-    def save_values(self, text, storage, counter, **kwargs):
+    def _save_values(self, text, storage, counter, **kwargs):
         for pattern in self.patterns:
             text = pattern.sub(self._replace(storage, counter), text)
         return text
@@ -121,7 +121,7 @@ class Quotes(BaseProcessor):
         self.leq, self.req = self.typus.leq, self.typus.req
 
         # Pairs of odd and even quotes. Already *switched* in one dimension.
-        # See :meth:`switch_nested` for more help.
+        # See :meth:`_switch_nested` for more help.
         self.switch = (self.loq + self.req, self.leq + self.roq)
 
         # Replaces all quotes with `"`
@@ -171,11 +171,11 @@ class Quotes(BaseProcessor):
                 return func(normalized, *args, **kwargs)
 
             # At this point all quotes are of odd type, have to fix it
-            switched = self.switch_nested(normalized)
+            switched = self._switch_nested(normalized)
             return func(switched, *args, **kwargs)
         return inner
 
-    def switch_nested(self, text):
+    def _switch_nested(self, text):
         """
         Switches nested quotes to *other* type.
         This function stored in a separate method to make possible it to mock

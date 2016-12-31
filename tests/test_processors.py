@@ -50,7 +50,7 @@ class EscapeHtmlTest(unittest2.TestCase):
     def typus(self):
         return lambda text, test: self.assertEqual(ru_typus(text), test)
 
-    @mock.patch('typus.processors.EscapeHtml.restore_values',
+    @mock.patch('typus.processors.EscapeHtml._restore_values',
                 return_value='test')
     def test_restore_html_call(self, mock_restore_values):
         ru_typus('test')
@@ -136,7 +136,7 @@ class Quotes(unittest2.TestCase):
         testus = self.Testus()
         return lambda text, test: self.assertEqual(testus(text), test)
 
-    @mock.patch('typus.processors.TypoQuotes.switch_nested',
+    @mock.patch('typus.processors.Quotes._switch_nested',
                 return_value='test')
     def test_switch_nested_call(self, mock_switch_nested):
         test = self.Testus()
