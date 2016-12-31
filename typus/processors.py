@@ -8,7 +8,7 @@ from itertools import count, cycle
 from .chars import DLQUO, LAQUO, LDQUO, LSQUO, RAQUO, RDQUO, RSQUO
 from .utils import re_compile
 
-def mock_processor(text, *args, **kwargs):
+def tail_processor(text, *args, **kwargs):
     return text
 
 
@@ -29,7 +29,7 @@ class BaseProcessor(object):
         raise NotImplementedError
 
     def __radd__(self, other):
-        return self(other or mock_processor)
+        return self(other or tail_processor)
 
 
 class EscapePhrases(BaseProcessor):
