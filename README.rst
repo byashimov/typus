@@ -21,6 +21,8 @@ can see with Helvetica:
 
 .. image:: https://raw.githubusercontent.com/byashimov/typus/develop/docs/example.png
 
+Try out the demo_.
+
 
 Installation
 ------------
@@ -114,3 +116,4 @@ Todo
 
 .. _link: https://habrahabr.ru/post/303608/
 .. _readthedocs.org: http://py-typus.readthedocs.io/en/latest/
+.. _demo: https://byashimov.com/typus/
