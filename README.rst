@@ -29,7 +29,7 @@ Installation
 
 .. code-block:: console
 
-    pip install -e git://github.com/byashimov/typus.git#egg=typus
+    pip install git+git://github.com/byashimov/typus.git#egg=typus
 
 
 Usage
