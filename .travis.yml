@@ -13,7 +13,6 @@ cache:
 install:
   - travis_retry pip install tox-travis codecov
 script:
-  - python --version
   - tox
 after_success:
   - coverage report

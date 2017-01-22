@@ -21,13 +21,21 @@ can see with Helvetica:
 
 .. image:: https://raw.githubusercontent.com/byashimov/typus/develop/docs/example.png
 
+Try out the demo_.
+
+
+Web API
+-------
+
+A tiny `web-service`_ for whatever legal purpose it may serve.
+
 
 Installation
 ------------
 
 .. code-block:: console
 
-    pip install -e git://github.com/byashimov/typus.git#egg=typus
+    $ pip install git+git://github.com/byashimov/typus.git#egg=typus
 
 
 Usage
@@ -45,13 +53,15 @@ Here is a short example:
 
 .. code-block:: python
 
-    from typus import en_typus, ru_typus
+    >>> from typus import en_typus, ru_typus
+    ...
+    >>> # Underscore is for nbsp in debug mode
+    >>> en_typus('"Beautiful is better than ugly." (c) Tim Peters.', debug=True)
+    '“Beautiful is_better than ugly.” ©_Tim Peters.'
+    >>> # Cyrillic 'с' in '(с)'
+    >>> ru_typus('"Красивое лучше, чем уродливое." (с) Тим Петерс.', debug=True)
+    '«Красивое лучше, чем уродливое.» ©_Тим Петерс.'
 
-    en_typus('"Beautiful is better than ugly." (c) Tim Peters.', debug=True)
-    '“Beautiful is_better than ugly.” © Tim Peters.'  # nbsp after '©'
-
-    ru_typus('"Красивое лучше, чем уродливое." (с) Тим Петерс.')
-    '«Красивое лучше, чем уродливое.» © Тим Петерс.'  # cyrillic 'с' in '(с)'
 
 The only difference between ``en_typus`` and ``ru_typus``
 are in quotes they set: ``“‘’”`` for English and ``«„“»`` for Russian. Both of
@@ -112,5 +122,7 @@ Todo
 - Rewrite tests, they are ugly as hell.
 - Add missing doctests.
 
-.. _link: https://habrahabr.ru/post/303608/
+.. _demo: https://byashimov.com/typus/
+.. _web-service: https://byashimov.com/typus/api/
 .. _readthedocs.org: http://py-typus.readthedocs.io/en/latest/
+.. _link: https://habrahabr.ru/post/303608/
