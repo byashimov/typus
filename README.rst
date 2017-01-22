@@ -24,6 +24,12 @@ can see with Helvetica:
 Try out the demo_.
 
 
+Web API
+-------
+
+A tiny `web-service`_ for whatever legal purpose it may serve.
+
+
 Installation
 ------------
 
@@ -116,6 +122,7 @@ Todo
 - Rewrite tests, they are ugly as hell.
 - Add missing doctests.
 
-.. _link: https://habrahabr.ru/post/303608/
-.. _readthedocs.org: http://py-typus.readthedocs.io/en/latest/
 .. _demo: https://byashimov.com/typus/
+.. _web-service: https://byashimov.com/typus/api/
+.. _readthedocs.org: http://py-typus.readthedocs.io/en/latest/
+.. _link: https://habrahabr.ru/post/303608/
