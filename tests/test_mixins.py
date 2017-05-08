@@ -143,6 +143,7 @@ class EnRuExpressionsTestCommon(object):
             for option in options:
                 # -3, 3-3, 3 - 3, x - 3
                 test(option + '3', result + '3')
+                test('word{0} 3'.format(option), 'word{0} 3'.format(option))
                 test('3{0}3'.format(option), '3{0}3'.format(result))
                 test('3 {0} 3'.format(option), '3 {0} 3'.format(result))
                 test('x {0} 3'.format(option), 'x {0} 3'.format(result))
