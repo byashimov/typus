@@ -356,7 +356,7 @@ class EnRuExpressions(object):
         """
 
         expr = (
-            (r'(^|\d{0}*|{0}*)[{1}]({0}*\d)'.format(ANYSP, re.escape(x)),
+            (r'(^|{0}|\d)[{1}]({0}*\d)'.format(ANYSP, re.escape(x)),
              r'\1{0}\2'.format(y)) for x, y in self.math.items()
         )
         return expr
