@@ -1,27 +1,21 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+import pytest
 
-from builtins import *  # noqa
-
-import mock
-import unittest2
 from typus import TypusCore, ru_typus
 
 
-class TypusTest(unittest2.TestCase):
-    @mock.patch('typus.ru_typus.process')
-    def test_empty(self, mock_process):
-        self.assertEqual(ru_typus(''), '')
-        mock_process.assert_not_called()
-
-    def test_debug(self):
-        self.assertEqual(ru_typus('2mm', debug=True), '2_mm')
+def test_empty_string(mocker):
+    mocker.patch('typus.ru_typus.process')
+    assert ru_typus('') == ''
+    ru_typus.process.assert_not_called()
 
 
-class BaseTypusTest(unittest2.TestCase):
-    def test_empty(self):
-        class Testus(TypusCore):
-            pass
+def test_debug_true():
+    assert ru_typus('2mm', debug=True) == '2_mm'
 
-        with self.assertRaises(AssertionError):
-            Testus()
+
+def test_no_processors():
+    class Testus(TypusCore):
+        pass
+
+    with pytest.raises(AssertionError):
+        Testus()

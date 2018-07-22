@@ -1,0 +1,7 @@
+[MASTTER]
+ignore=
+    docs
+disable=
+    missing-docstring,
+    wildcard-import,
+    unused-wildcard-import,
