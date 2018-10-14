@@ -16,7 +16,7 @@ and let it handle all that formating headache:
 
 Copy & paste this example to your rich text editor. Result may depend on
 the font of your choice.
-For instance, there is a tiny non-breakable space between ``A. A.`` you
+For instance, there is a tiny non-breaking space between ``A. A.`` you
 can see with Helvetica:
 
 .. image:: https://raw.githubusercontent.com/byashimov/typus/develop/docs/example.png
@@ -85,7 +85,7 @@ What it does
 - Replaces vulgar fractions ``1/2`` with unicode characters: ``½``.
 - Turns multiply symbol to a real one: ``3x3`` becomes ``3×3``.
 - Replaces quotes with primes: ``2' 4"`` becomes ``2′ 4″``.
-- Puts non-breakable spaces.
+- Puts non-breaking spaces.
 - Puts ruble symbol.
 - Trims spaces at the end of lines.
 - and much more.

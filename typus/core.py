@@ -10,8 +10,7 @@ __all__ = ('TypusCore', )
 
 class TypusCore:
     """
-    This class makes :mod:`typus.processors` and :mod:`typus.mixins` work
-    together.
+    This class runs :mod:`typus.processors` chained together.
     """
 
     processors = ()

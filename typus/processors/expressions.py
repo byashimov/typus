@@ -232,7 +232,7 @@ class EnRuExpressions(BaseExpressions):
         Replaces dash with mdash.
 
         >>> from typus import en_typus
-        >>> en_typus('foo -- bar')  # adds non-breakable space after `foo`
+        >>> en_typus('foo -- bar')  # adds non-breaking space after `foo`
         'foo\u00A0— bar'
         """
 
@@ -297,7 +297,7 @@ class EnRuExpressions(BaseExpressions):
 
     def expr_digit_spaces(self):
         """
-        Replaces whitespace with non-breakable space after 4 (and less)
+        Replaces whitespace with non-breaking space after 4 (and less)
         length digits if word or digit without comma or math operators
         found afterwards:
         3 apples
@@ -316,7 +316,7 @@ class EnRuExpressions(BaseExpressions):
 
     def expr_pairs(self):
         """
-        Replaces whitespace with non-breakable space after 1-2 length words.
+        Replaces whitespace with non-breaking space after 1-2 length words.
         """
 
         expr = (
@@ -329,7 +329,7 @@ class EnRuExpressions(BaseExpressions):
 
     def expr_units(self):
         """
-        Puts non-breakable space between digits and units.
+        Puts non-breaking space between digits and units.
 
         >>> from typus import en_typus
         >>> en_typus('1mm', debug=True), en_typus('1mm')
@@ -413,7 +413,7 @@ class EnRuExpressions(BaseExpressions):
 
     def expr_abbrs(self):
         """
-        Adds narrow non-breakable space and replaces whitespaces between
+        Adds narrow non-breaking space and replaces whitespaces between
         shorten words.
         """
 
@@ -463,7 +463,7 @@ class EnRuExpressions(BaseExpressions):
     def expr_rep_positional_spaces(self):
         """
         Replaces whitespaces after and before certain symbols
-        with non-breakable space.
+        with non-breaking space.
         """
 
         expr = self._positional_spaces(self.rep_positional_spaces, WHSP, NBSP)
