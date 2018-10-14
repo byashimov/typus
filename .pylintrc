@@ -1,7 +1,10 @@
-[MASTTER]
-ignore=
-    docs
+[MASTER]
+ignore=docs
 disable=
     missing-docstring,
     wildcard-import,
     unused-wildcard-import,
+    too-few-public-methods,
+    invalid-name,
+    arguments-differ,
+    too-many-instance-attributes,
