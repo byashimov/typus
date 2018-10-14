@@ -1,47 +1,64 @@
-# coding: utf-8
-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 import re
-from builtins import *  # noqa
+from functools import partial
 
-from .chars import *  # noqa
-from .utils import map_choices
+from ..chars import *
+from ..utils import map_choices, re_choices, re_compile
+from .base import BaseProcessor
 
-__all__ = ('EnQuotes', 'RuQuotes', 'EnRuExpressions')
 
-
-class EnQuotes(object):
+class BaseExpressions(BaseProcessor):
     r"""
-    Provides English quotes configutation for :class:`typus.processors.Quotes`
-    processor.
+    Provides regular expressions support. Looks for ``expressions`` list
+    attribute in Typus with expressions name, compiles and runs them on every
+    Typus call.
 
-    >>> en_typus('He said "\'Winnie-the-Pooh\' is my favorite book!".')
-    'He said “‘Winnie-the-Pooh’ is my favorite book!”.'
+    >>> from typus.core import TypusCore
+    >>> from typus.processors import BaseExpressions
+    ...
+    >>> class MyExpressions(BaseExpressions):
+    ...     expressions = ('bold_price', )  # no prefix `expr_`!
+    ...     def expr_bold_price(self):
+    ...         expr = (
+    ...             (r'(\$\d+)', r'<b>\1</b>'),
+    ...         )
+    ...         return expr
+    ...
+    >>> class MyTypus(TypusCore):
+    ...     processors = (MyExpressions, )
+    ...
+    >>> my_typus = MyTypus()  # `expr_bold_price` is compiled and stored
+    >>> my_typus('Get now just for $1000!')
+    'Get now just for <b>$1000</b>!'
+
+    .. note::
+        *Expression* is a pair of regex and replace strings. Regex strings are
+        compiled with :func:`typus.utils.re_compile` with a bunch of flags:
+        unicode, case-insensitive, etc. If that doesn't suit for you pass your
+        own flags as a third member of the tuple: ``(regex, replace, re.I)``.
     """
 
-    # Left odd, right odd, left even, right even
-    loq, roq, leq, req = LDQUO, RDQUO, LSQUO, RSQUO
+    expressions = NotImplemented
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Compiles expressions
+        self.compiled = tuple(
+            partial(re_compile(*expr[::2]).sub, expr[1])
+            for name in self.expressions
+            for expr in getattr(self, 'expr_' + name)()
+        )
+
+    def run(self, text: str, **kwargs) -> str:
+        for expression in self.compiled:
+            text = expression(text)
+        return self.run_other(text, **kwargs)
 
 
-class RuQuotes(object):
-    r"""
-    Provides Russian quotes configutation for :class:`typus.processors.Quotes`
-    processor.
-
-    >>> ru_typus('Он сказал: "\'Винни-Пух\' -- моя любимая книга!".')
-    'Он сказал: «„Винни-Пух“ — моя любимая книга!».'
-    """
-
-    # Left odd, right odd, left even, right even
-    loq, roq, leq, req = LAQUO, RAQUO, DLQUO, LDQUO
-
-
-class EnRuExpressions(object):
+class EnRuExpressions(BaseExpressions):
     """
     This class holds most of Typus functionality for English and Russian
-    languages. It works with :class:`typus.processors.Expressions`.
+    languages.
     """
 
     expressions = (
@@ -68,16 +85,40 @@ class EnRuExpressions(object):
         '(p)': '℗',
         '(tm)': '™',
         '(sm)': '℠',
+        'mA*h': 'mA•h',
         # cyrillic
         '(с)': '©',
         '(р)': '℗',
         '(тм)': '™',
-
+        'мА*ч': 'мА•ч',
     }
+
+    units = (
+        'mm',
+        'cm',
+        'dm',
+        'm',
+        'km',
+        'mg',
+        'kg',
+        'dpi',
+        'mA•h',
+        'мм',
+        'см',
+        'дм',
+        'м',
+        'км',
+        'мг',
+        'г',
+        'кг',
+        'т',
+        'мА•ч',
+    )
 
     vulgar_fractions = {
         '1/2': '½',
         '1/3': '⅓',
+        '1/4': '​¼',
         '1/5': '⅕',
         '1/6': '⅙',
         '1/8': '⅛',
@@ -97,7 +138,7 @@ class EnRuExpressions(object):
         '*xх': TIMES,
     }
 
-    # Not need to put >=, +-, etc, after expr_complex_symbols
+    # No need to put >=, +-, etc, after expr_complex_symbols
     math_operators = r'[\-{0}\*xх{1}\+\=±≤≥≠÷\/]'.format(MINUS, TIMES)
 
     rep_positional_spaces = {
@@ -115,11 +156,13 @@ class EnRuExpressions(object):
     # Replace this if you don't need nbsp before ruble
     ruble = NBSP + '₽'
 
-    def expr_spaces(self):
+    @staticmethod
+    def expr_spaces():
         """
-        Trims spaces at the beginning and end of the line and remove extra
+        Trims spaces at the beginning and end of the line and removes extra
         spaces within.
 
+        >>> from typus import en_typus
         >>> en_typus('   foo bar  ')
         'foo bar'
 
@@ -133,11 +176,13 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def expr_linebreaks(self):
+    @staticmethod
+    def expr_linebreaks():
         r"""
         Converts line breaks to unix-style and removes extra breaks
         if found more than two in a row.
 
+        >>> from typus import en_typus
         >>> en_typus('foo\r\nbar\n\n\nbaz')
         'foo\nbar\n\nbaz'
         """
@@ -152,6 +197,7 @@ class EnRuExpressions(object):
         """
         Replaces single quote with apostrophe.
 
+        >>> from typus import en_typus
         >>> en_typus("She'd, I'm, it's, don't, you're, he'll, 90's")
         'She’d, I’m, it’s, don’t, you’re, he’ll, 90’s'
 
@@ -170,13 +216,9 @@ class EnRuExpressions(object):
         about case-sensitivity and handles Cyrillic-Latin twins
         like ``c`` and ``с``.
 
+        >>> from typus import en_typus
         >>> en_typus('(c)(с)(C)(r)(R)...')
         '©©©®®…'
-
-        .. csv-table:: Character map
-            :header: …, ←, →, ±, ≤, ≥, ≠, ≡, ®, ©, ℗, ™, ℠
-
-            ..., <-, ->, +- or +−, <=, >=, /=, ==, (r), (c), (p), (tm), (sm)
         """
 
         expr = (
@@ -184,10 +226,12 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def expr_mdash(self):
+    @staticmethod
+    def expr_mdash():
         """
         Replaces dash with mdash.
 
+        >>> from typus import en_typus
         >>> en_typus('foo -- bar')  # adds non-breakable space after `foo`
         'foo\u00A0— bar'
         """
@@ -215,10 +259,12 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def expr_primes(self):
+    @staticmethod
+    def expr_primes():
         r"""
         Replaces quotes with prime after digits.
 
+        >>> from typus import en_typus
         >>> en_typus('3\' 5" long')
         '3′ 5″ long'
 
@@ -232,11 +278,13 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def expr_phones(self):
+    @staticmethod
+    def expr_phones():
         """
         Replaces dash with ndash in phone numbers which should be a trio of
         2-4 length digits.
 
+        >>> from typus import en_typus
         >>> en_typus('111-00-00'), en_typus('00-111-00'), en_typus('00-00-111')
         ('111–00–00', '00–111–00', '00–00–111')
         """
@@ -283,13 +331,13 @@ class EnRuExpressions(object):
         """
         Puts non-breakable space between digits and units.
 
+        >>> from typus import en_typus
         >>> en_typus('1mm', debug=True), en_typus('1mm')
         ('1_mm', '1 mm')
         """
 
         expr = (
-            (r'\b(\d+){0}*(?!(?:nd|rd|th|d|g|px)\b)({1}{{1,3}})\b'
-             .format(WHSP, self.words),
+            (r'\b(\d+){0}*{1}\b'.format(WHSP, re_choices(self.units)),
              r'\1{0}\2'.format(NBSP)),
         )
         return expr
@@ -326,6 +374,7 @@ class EnRuExpressions(object):
         """
         Replaces vulgar fractions with appropriate unicode characters.
 
+        >>> from typus import en_typus
         >>> en_typus('1/2')
         '½'
         """
@@ -341,6 +390,7 @@ class EnRuExpressions(object):
         Puts minus and multiplication symbols between pair and before
         single digits.
 
+        >>> from typus import en_typus
         >>> en_typus('3 - 3 = 0')
         '3 − 3 = 0'
         >>> en_typus('-3 degrees')
@@ -380,6 +430,7 @@ class EnRuExpressions(object):
         Replaces `руб` and `р` (with or without dot) after digits
         with ruble symbol.
 
+        >>> from typus import en_typus
         >>> en_typus('1000 р.')
         '1000 ₽'
 
@@ -394,7 +445,8 @@ class EnRuExpressions(object):
         )
         return expr
 
-    def _positional_spaces(self, data, find, replace):
+    @staticmethod
+    def _positional_spaces(data, find, replace):
         """
         Helper method for `rep_positional_spaces` and `del_positional_spaces`
         expressions.
@@ -403,12 +455,10 @@ class EnRuExpressions(object):
         both = data.get('both', '')
         before = re.escape(data.get('before', '') + both)
         after = re.escape(data.get('after', '') + both)
-        expr = []
         if before:
-            expr.append((r'{0}+(?=[{1}])'.format(find, before), replace))
+            yield r'{0}+(?=[{1}])'.format(find, before), replace
         if after:
-            expr.append((r'(?<=[{1}]){0}+'.format(find, after), replace))
-        return expr
+            yield r'(?<=[{1}]){0}+'.format(find, after), replace
 
     def expr_rep_positional_spaces(self):
         """
@@ -417,7 +467,7 @@ class EnRuExpressions(object):
         """
 
         expr = self._positional_spaces(self.rep_positional_spaces, WHSP, NBSP)
-        return expr
+        return tuple(expr)
 
     def expr_del_positional_spaces(self):
         """
@@ -425,4 +475,4 @@ class EnRuExpressions(object):
         """
 
         expr = self._positional_spaces(self.del_positional_spaces, ANYSP, '')
-        return expr
+        return tuple(expr)

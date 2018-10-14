@@ -4,9 +4,9 @@ from typus import TypusCore, ru_typus
 
 
 def test_empty_string(mocker):
-    mocker.patch('typus.ru_typus.process')
+    mocker.patch('typus.ru_typus.procs')
     assert ru_typus('') == ''
-    ru_typus.process.assert_not_called()
+    ru_typus.procs.run.assert_not_called()
 
 
 def test_debug_true():

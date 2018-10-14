@@ -5,21 +5,21 @@ applied earlier, so order matters. But that also means it's important
 to be sure they don't affect each other more than expected. This case
 tests every expression as if it was the only one to apply.
 """
-
 import pytest
 
 from typus.chars import *
 from typus.core import TypusCore
-from typus.mixins import EnRuExpressions
-from typus.processors import Expressions
+from typus.processors import EnRuExpressions
 
 
 @pytest.fixture(name='factory')
 def get_factory():
-    def factory(expression):
-        class Typus(EnRuExpressions, TypusCore):
-            processors = (Expressions, )
-            expressions = (expression, )
+    def factory(*exps):
+        class MyExpressions(EnRuExpressions):
+            expressions = exps
+
+        class Typus(TypusCore):
+            processors = (MyExpressions, )
         return Typus()
     return factory
 
@@ -32,7 +32,7 @@ def get_factory():
 ))
 def test_ruble(factory, source, expected):
     typus = factory('ruble')
-    assert typus(source, expected)
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -40,7 +40,7 @@ def test_ruble(factory, source, expected):
 ))
 def test_spaces(factory, source, expected):
     typus = factory('spaces')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -51,7 +51,7 @@ def test_spaces(factory, source, expected):
 ))
 def test_linebreaks(factory, source, expected):
     typus = factory('linebreaks')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -66,7 +66,7 @@ def test_linebreaks(factory, source, expected):
 ))
 def test_apostrophe(factory, source, expected):
     typus = factory('apostrophe')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -87,7 +87,7 @@ def test_apostrophe(factory, source, expected):
 ))
 def test_mdash(factory, source, expected):
     typus = factory('mdash')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -98,7 +98,7 @@ def test_mdash(factory, source, expected):
 ))
 def test_primes(factory, source, expected):
     typus = factory('primes')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -108,7 +108,7 @@ def test_primes(factory, source, expected):
 ))
 def test_phones(factory, source, expected):
     typus = factory('phones')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -121,7 +121,7 @@ def test_phones(factory, source, expected):
 ))
 def test_digit_spaces(factory, source, expected):
     typus = factory('digit_spaces')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -134,16 +134,31 @@ def test_digit_spaces(factory, source, expected):
 ))
 def test_pairs(factory, source, expected):
     typus = factory('pairs')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
     # Latin
     ('1mm', f'1{NBSP}mm'),
-    ('1 mm', f'1{NBSP}mm'),
+    ('1cm', f'1{NBSP}cm'),
+    ('1dm', f'1{NBSP}dm'),
+    ('1m', f'1{NBSP}m'),
+    ('1km', f'1{NBSP}km'),
+    ('1mg', f'1{NBSP}mg'),
+    ('1kg', f'1{NBSP}kg'),
+    ('1mA•h', f'1{NBSP}mA•h'),
     ('1dpi', f'1{NBSP}dpi'),
     # Cyrillic
+    ('1мм', f'1{NBSP}мм'),
+    ('1см', f'1{NBSP}см'),
+    ('1дм', f'1{NBSP}дм'),
+    ('1м', f'1{NBSP}м'),
+    ('1км', f'1{NBSP}км'),
+    ('1мг', f'1{NBSP}мг'),
+    ('1г', f'1{NBSP}г'),
     ('1кг', f'1{NBSP}кг'),
+    ('1т', f'1{NBSP}т'),
+    ('1мА•ч', f'1{NBSP}мА•ч'),
     # Skips
     ('1foobar', '1foobar'),
     # Exceptions
@@ -153,10 +168,11 @@ def test_pairs(factory, source, expected):
     ('3rd', '3rd'),  # floor
     ('4th', '4th'),  # floor
     ('1px', '1px'),
+    ('1000A', '1000A'),
 ))
 def test_units(factory, source, expected):
     typus = factory('units')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -187,7 +203,7 @@ def test_units(factory, source, expected):
 ))
 def test_ranges(factory, source, expected):
     typus = factory('ranges')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -206,14 +222,16 @@ def test_ranges(factory, source, expected):
     ('(p)', '℗'),
     ('(tm)', '™'),
     ('(sm)', '℠'),
+    ('mA*h', 'mA•h'),
     # cyrillic
     ('(с)', '©'),
     ('(р)', '℗'),
     ('(тм)', '™',),
+    ('мА*ч', 'мА•ч'),
 ))
 def test_complex_symbols(factory, source, expected):
     typus = factory('complex_symbols')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -235,7 +253,7 @@ def test_complex_symbols(factory, source, expected):
 ))
 def test_vulgar_fractions(factory, source, expected):
     typus = factory('vulgar_fractions')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('source, expected', (
@@ -265,28 +283,28 @@ def test_math(factory, source, expected):
 ))
 def test_abbrs(factory, source, expected):
     typus = factory('abbrs')
-    assert typus(source) == expected
+    assert expected == typus(source)
 
 
 @pytest.mark.parametrize('char', f'←$€£%±{MINUS}{TIMES}©§¶№')
-def test_rep_positional_spaces_before(factory, char):
+def test_rep_positional_spaces_after(factory, char):
     typus = factory('rep_positional_spaces')
-    assert typus(f'foo {char} bar', f'foo{NBSP}{char} bar')
+    assert typus(f'foo {char} bar') == f'foo {char}{NBSP}bar'
 
 
 @pytest.mark.parametrize('char', '&≡≤≥≠')
 def test_rep_positional_spaces_both(factory, char):
     typus = factory('rep_positional_spaces')
-    assert typus(f'foo {char} bar', f'foo{NBSP}{char}{NBSP}bar')
+    assert typus(f'foo {char} bar') == f'foo{NBSP}{char}{NBSP}bar'
 
 
 @pytest.mark.parametrize('char', '₽→' + MDASH)
-def test_rep_positional_spaces_after(factory, char):
+def test_rep_positional_spaces_before(factory, char):
     typus = factory('rep_positional_spaces')
-    assert typus(f'foo {char} bar', f'foo {char}{NBSP}bar')
+    assert typus(f'foo {char} bar') == f'foo{NBSP}{char} bar'
 
 
 @pytest.mark.parametrize('char', '®℗™℠:,.?!…')
 def test_rdel_positional_spaces_before(factory, char):
     typus = factory('del_positional_spaces')
-    assert typus(f'foo {char} bar', f'foo{char} bar')
+    assert typus(f'foo {char} bar') == f'foo{char} bar'

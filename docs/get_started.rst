@@ -16,22 +16,20 @@ that for you.
 The anatomy
 -----------
 
-Typus uses :ref:`Processors` to do the job and :ref:`Mixins` as
-those settings. And there is a :py:class:`typus.core.TypusCore`
-class which makes all of them work together. Here is a quick example:
+:py:class:`typus.core.TypusCore` runs :ref:`Processors` to do the job
+which can be plugged in for desired configuration.
+Here is a quick example:
 
 .. testcode::
 
     from typus.core import TypusCore
-    from typus.mixins import EnQuotes
-    from typus.processors import Quotes
+    from typus.processors import EnQuotes
 
-    class MyTypus(EnQuotes, TypusCore):
-        processors = (Quotes, )
+    class MyTypus(TypusCore):
+        processors = (EnQuotes, )
 
     my_typus = MyTypus()
     assert my_typus('"quoted text"') == '“quoted text”'
 
-:py:class:`typus.core.TypusCore` runs :py:class:`typus.processors.Quotes`
-processor which uses *quotes* configuration from
-:py:class:`typus.mixins.EnQuotes`.
+:py:class:`typus.core.TypusCore` runs :py:class:`typus.processors.EnQuotes`
+processor which improves *quotes* only.

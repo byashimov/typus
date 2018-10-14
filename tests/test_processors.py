@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from typus import RuTypus, ru_typus
+from typus import EscapeHtml, EscapePhrases, RuQuotes, TypusCore, ru_typus
 
 
 @pytest.mark.parametrize('source, expected, escape_phrases', (
@@ -106,13 +106,17 @@ def test_iframe(source):
 
 @pytest.fixture(name='typus')
 def get_typus():
-    class Typus(RuTypus):
-        expressions = ''
+    class Typus(TypusCore):
+        processors = (
+            EscapePhrases,
+            EscapeHtml,
+            RuQuotes,
+        )
 
     return Typus()
 
 
-@mock.patch('typus.processors.Quotes._switch_nested', return_value='test')
+@mock.patch('typus.processors.BaseQuotes._switch_nested', return_value='test')
 def test_switch_nested_call(mock_switch_nested, typus):
     # No quotes
     typus('00 11 00')

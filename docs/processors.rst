@@ -24,34 +24,29 @@ In python:
     from typus.processors import BaseProcessor, EscapeHtml
 
     class MyTrimProcessor(BaseProcessor):
-        def __call__(self, func):
-            def inner(text, *args, **kwargs):
-                # When processor is initiated it gets typus instance
-                # as the first argument so you can access to it's configuration
-                # any time
-                if self.typus.trim:
-                    trimmed = text.strip()
-                else:
-                    trimmed = text
-                return func(trimmed, *args, **kwargs)
-            return inner
+        def run(self, text, **kwargs):
+            # When processor is initiated it gets typus instance
+            # as the first argument so you can access to it's configuration
+            # any time
+            if self.typus.trim:
+                trimmed = text.strip()
+            else:
+                trimmed = text
+            return self.run_other(trimmed, **kwargs)
 
     class MyTypus(TypusCore):
         # This becomes a single function. EscapeHtml goes first
         processors = (EscapeHtml, MyTrimProcessor)
 
-        # Set it `False` to disable trimming
+        # Set it to `False` to disable trimming
         trim = True
 
     my_typus = MyTypus()
     assert my_typus('    test    ') == 'test'
 
 
-Processors can be configured with :ref:`Mixins`.
-
-
 Built-in processors
 -------------------
 
 .. automodule:: typus.processors
-    :members:
+    :members: EnQuotes, RuQuotes, EnRuExpressions, EscapeHtml, EscapePhrases

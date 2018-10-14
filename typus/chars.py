@@ -1,6 +1,23 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
+__all__ = (
+    'ANYSP',
+    'DLQUO',
+    'DPRIME',
+    'LAQUO',
+    'LDQUO',
+    'LSQUO',
+    'MDASH',
+    'MDASH_PAIR',
+    'MINUS',
+    'NBSP',
+    'NDASH',
+    'NNBSP',
+    'RAQUO',
+    'RDQUO',
+    'RSQUO',
+    'SPRIME',
+    'TIMES',
+    'WHSP',
+)
 
 NBSP = '\u00A0'
 NNBSP = '\u202F'

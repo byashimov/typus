@@ -54,7 +54,7 @@ def test_quotes(assert_typus, source, expected):
 
     # This one for ru_typus
     ('foo - "11" 00', f'foo{MDASH_PAIR}«11» 00'),
-    ('2 - 2foo', f'2{MDASH_PAIR}2{NBSP}foo'),  # + units
+    ('2 - 2foo', f'2{MDASH_PAIR}2foo'),  # no units clash
     ('2 - 2', f'2{NBSP}{MINUS}{NBSP}2'),  # + minus
     ('Winnie-the-Pooh', 'Winnie-the-Pooh'),
 ))
@@ -136,7 +136,7 @@ def test_math(assert_typus, source, expected):
 
 
 @pytest.mark.parametrize('source, expected', (
-    ('aaa 2a', f'aaa 2{NBSP}a'),  # clashes with units
+    ('aaa 2a', f'aaa 2a'),  # doesnt clash with units
 ))
 def test_pairs(assert_typus, source, expected):
     assert_typus(source, expected)
@@ -147,7 +147,7 @@ def test_pairs(assert_typus, source, expected):
     ('444 foo', f'444{NBSP}foo'),
     ('444 +', f'444{NBSP}+'),
     ('444 4444 bucks', f'444{NBSP}4444 bucks'),
-    ('4444444 foo', f'4444444{NBSP}foo'),  # + untis
+    ('4444444 foo', f'4444444 foo'),  # no untis clash
     ('444 -', f'444{NBSP}{MDASH}'),
 ))
 def test_digit_spaces(assert_typus, source, expected):
@@ -165,6 +165,7 @@ def test_example(assert_typus):
         'собой писания Дюринга для не окрепшего еще немецкого рабочего '
         'движения. Смысл жизни -- амбивалентно (с) дискредитирует '
         'закон (r) исключённого(tm) третьего (тм)...      \n\n\n'
+        '1500 мА*ч\n\n'
         '- Химическое соединение (p) ненаблюдаемо контролирует экран-ый '
         'квазар (р). Идеи 3/4  гедонизма занимают b & b центральное место '
         'в утилитаризме(sm) "Милля и Бентама", однако <- гравитирующая -> '
@@ -183,6 +184,7 @@ def test_example(assert_typus):
         'писания Дюринга для не_окрепшего еще немецкого рабочего '
         'движения. Смысл жизни_— амбивалентно ©_дискредитирует закон® '
         'исключённого™ третьего™…\n\n'
+        '1500_мА•ч\n\n'
         '—_Химическое соединение℗ ненаблюдаемо контролирует экран-ый '
         'квазар℗. Идеи ¾_гедонизма занимают b_&_b_центральное место '
         'в_утилитаризме℠ «Милля и_Бентама», однако ←_гравитирующая_→ '

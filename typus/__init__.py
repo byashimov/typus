@@ -1,22 +1,31 @@
+# pylint: disable=invalid-name
+
 from .core import TypusCore
-from .mixins import EnQuotes, EnRuExpressions, RuQuotes
-from .processors import EscapeHtml, EscapePhrases, Expressions, Quotes
+from .processors import (
+    EnQuotes,
+    EnRuExpressions,
+    EscapeHtml,
+    EscapePhrases,
+    RuQuotes,
+)
 
 
-class BaseTypus(EnRuExpressions, TypusCore):
-    processors = (EscapePhrases, EscapeHtml, Quotes, Expressions)
+class EnTypus(TypusCore):
+    processors = (
+        EscapePhrases,
+        EscapeHtml,
+        EnQuotes,
+        EnRuExpressions,
+    )
 
 
-class EnTypus(EnQuotes, BaseTypus):
-    """
-    TODO:
-    """
-
-
-class RuTypus(RuQuotes, BaseTypus):
-    """
-    TODO:
-    """
+class RuTypus(TypusCore):
+    processors = (
+        EscapePhrases,
+        EscapeHtml,
+        RuQuotes,
+        EnRuExpressions,
+    )
 
 
 en_typus, ru_typus = EnTypus(), RuTypus()

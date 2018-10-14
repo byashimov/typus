@@ -1,41 +1,17 @@
+# pylint: disable=anomalous-backslash-in-string
+
 import pytest
 
 from typus.utils import idict, splinter
 
 
 @pytest.mark.parametrize('source, expected', (
-    ({'A': 0, 'b': 1}, {'a': 0, 'b': 1}),
+    ({'A': 0, 'b': 1, 'BAr': 2}, {'a': 0, 'b': 1, 'bar': 2}),
 ))
-def test_idict_create_from_dict(source, expected):
+def test_idict(source, expected):
     result = idict(source)
     assert result == expected
     assert source != result
-
-
-@pytest.mark.parametrize('source, expected', (
-    ({'A': 0, 'b': 1}, {'a': 0, 'b': 1}),
-))
-def test_idict_create_from_seq(source, expected):
-    result = idict(source.items())
-    assert result == expected
-    assert source != result
-
-
-@pytest.mark.parametrize('source, expected', (
-    ({'A': 0, 'b': 1}, {'a': 0, 'b': 1}),
-))
-def test_idict_create_from_kwargs(source, expected):
-    result = idict(**source)
-    assert result == expected
-    assert source != result
-
-
-@pytest.mark.parametrize('source, expected', (
-    ({'A': 0, 'b': 1}, {'a': 0, 'b': 1}),
-))
-def test_idict_create_from_dict_and_kwargs(source, expected):
-    result = idict(source, B=1)
-    assert result == expected
 
 
 @pytest.mark.parametrize('source, expected', (
