@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='typus',
     version='0.2',
-    description='Multilanguage language typographer',
+    description='Multilanguage language typograph',
     url='https://github.com/byashimov/typus',
     author='Murad Byashimov',
     author_email='byashimov@gmail.com',
@@ -18,5 +18,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )

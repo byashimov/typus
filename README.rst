@@ -42,7 +42,7 @@ Usage
 -----
 
 Currently Typus supports English and Russian languages only.
-Which doesn't mean it can't handle more. I'm quite sure it covers Serbian
+But it doesn't mean it can't handle more. I'm quite sure it covers Serbian
 and Turkmen.
 
 In fact, Typus doesn't make difference between languages. It works with text.
@@ -113,14 +113,7 @@ Compatibility
     :alt: Codecov
     :target: https://codecov.io/gh/byashimov/typus
 
-Tested on Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6.
-
-
-Todo
-----
-
-- Rewrite tests, they are ugly as hell.
-- Add missing doctests.
+Tested on Python 3.6 but should work on any 3.x version.
 
 .. _demo: https://byashimov.com/typus/
 .. _web-service: https://byashimov.com/typus/api/
