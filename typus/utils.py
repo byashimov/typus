@@ -4,10 +4,23 @@ import re
 from functools import wraps
 from typing import Callable, Iterable, List
 
-__all__ = ('re_compile', 're_choices', 'idict', 'map_choices', 'splinter')
+__all__ = (
+    'RE_SCASE',
+    'RE_ICASE',
+    'doc_map',
+    'idict',
+    'map_choices',
+    're_choices',
+    're_compile',
+    'splinter',
+)
 
 
-def re_compile(pattern: str, flags=re.I | re.U | re.M | re.S):
+RE_SCASE = re.U | re.M | re.S  # sensitive case
+RE_ICASE = re.I | RE_SCASE  # insensitive case
+
+
+def re_compile(pattern: str, flags: int = RE_ICASE):
     """
     A shortcut to compile regex with predefined flags:
     :const:`re.I`, :const:`re.U`, :const:`re.M`, :const:`re.S`.
@@ -26,7 +39,7 @@ def re_compile(pattern: str, flags=re.I | re.U | re.M | re.S):
     return re.compile(pattern, flags)
 
 
-def re_choices(choices: Iterable[str], group: re = r'({})') -> str:
+def re_choices(choices: Iterable[str], group: str = r'({})') -> str:
     """
     Returns regex group of escaped choices.
 
@@ -94,6 +107,21 @@ def map_choices(data: dict, group: str = r'({})', dict_class=idict) -> tuple:
     def replace(match):
         return str(options[match.group()])
     return pattern, replace
+
+
+def doc_map(data: dict, keys='Before', values='After', delim='|'):
+    rows = '\n'.join(f'\t``{k}`` {delim} ``{v}``' for k, v in data.items())
+    table = (
+        f'\n.. csv-table::'
+        f'\n\t:delim: {delim}'
+        f'\n\t:header: "{keys}", "{values}"\n'
+        f'\n{rows}'
+    )
+
+    def updater(func):
+        func.__doc__ += table
+        return func
+    return updater
 
 
 def splinter(delimiter: str) -> Callable[[str], List[str]]:

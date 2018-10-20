@@ -2,7 +2,7 @@ import re
 from functools import partial
 
 from ..chars import *
-from ..utils import map_choices, re_choices, re_compile
+from ..utils import RE_SCASE, doc_map, map_choices, re_choices, re_compile
 from .base import BaseProcessor
 
 
@@ -101,6 +101,7 @@ class EnRuExpressions(BaseExpressions):
         'km',
         'mg',
         'kg',
+        'ml',
         'dpi',
         'mA•h',
         'мм',
@@ -112,8 +113,13 @@ class EnRuExpressions(BaseExpressions):
         'г',
         'кг',
         'т',
+        'мл',
+        'л',
         'мА•ч',
     )
+
+    # This is for docs
+    units_doc_map = {'1' + k: '1{}{}'.format(NBSP, k) for k in units}
 
     vulgar_fractions = {
         '1/2': '½',
@@ -153,8 +159,10 @@ class EnRuExpressions(BaseExpressions):
         'before': '®℗™℠:,.?!…',
     }
 
-    # Replace this if you don't need nbsp before ruble
-    ruble = NBSP + '₽'
+    ruble = (
+        'руб',
+        'р',
+    )
 
     @staticmethod
     def expr_spaces():
@@ -210,6 +218,7 @@ class EnRuExpressions(BaseExpressions):
         )
         return expr
 
+    @doc_map(complex_symbols)
     def expr_complex_symbols(self):
         """
         Replaces complex symbols with Unicode characters. Doesn't care
@@ -269,7 +278,7 @@ class EnRuExpressions(BaseExpressions):
         '3′ 5″ long'
 
         .. caution::
-            Won't break "4", but fails with " 4".
+            Won't break ``"4"``, but fails with ``" 4"``.
         """
 
         expr = (
@@ -327,9 +336,11 @@ class EnRuExpressions(BaseExpressions):
         )
         return expr
 
+    @doc_map(units_doc_map)
     def expr_units(self):
         """
-        Puts non-breaking space between digits and units.
+        Puts narrow non-breaking space between digits and units.
+        Case sensitive.
 
         >>> from typus import en_typus
         >>> en_typus('1mm', debug=True), en_typus('1mm')
@@ -338,7 +349,7 @@ class EnRuExpressions(BaseExpressions):
 
         expr = (
             (r'\b(\d+){0}*{1}\b'.format(WHSP, re_choices(self.units)),
-             r'\1{0}\2'.format(NBSP)),
+             r'\1{0}\2'.format(NBSP), RE_SCASE),
         )
         return expr
 
@@ -370,6 +381,7 @@ class EnRuExpressions(BaseExpressions):
         )
         return expr
 
+    @doc_map(vulgar_fractions)
     def expr_vulgar_fractions(self):
         """
         Replaces vulgar fractions with appropriate unicode characters.
@@ -385,6 +397,7 @@ class EnRuExpressions(BaseExpressions):
         )
         return expr
 
+    @doc_map(math)
     def expr_math(self):
         """
         Puts minus and multiplication symbols between pair and before
@@ -428,7 +441,7 @@ class EnRuExpressions(BaseExpressions):
     def expr_ruble(self):
         """
         Replaces `руб` and `р` (with or without dot) after digits
-        with ruble symbol.
+        with ruble symbol. Case sensitive.
 
         >>> from typus import en_typus
         >>> en_typus('1000 р.')
@@ -439,9 +452,10 @@ class EnRuExpressions(BaseExpressions):
             Drops the dot at the end of sentence if match found in there.
         """
 
+        choices = re_choices(self.ruble, r'(?:{0})')
         expr = (
-            (r'(\d){0}*(?:руб|р)\b\.?'.format(ANYSP),
-             r'\1{0}'.format(self.ruble)),
+            (r'(\d){0}*{1}\b\.?'.format(ANYSP, choices),
+             r'\1{0}₽'.format(NBSP), RE_SCASE),  # case matters
         )
         return expr
 
@@ -460,6 +474,7 @@ class EnRuExpressions(BaseExpressions):
         if after:
             yield r'(?<=[{1}]){0}+'.format(find, after), replace
 
+    @doc_map(rep_positional_spaces, keys='Direction', values='Characters')
     def expr_rep_positional_spaces(self):
         """
         Replaces whitespaces after and before certain symbols
@@ -469,6 +484,7 @@ class EnRuExpressions(BaseExpressions):
         expr = self._positional_spaces(self.rep_positional_spaces, WHSP, NBSP)
         return tuple(expr)
 
+    @doc_map(del_positional_spaces, keys='Direction', values='Characters')
     def expr_del_positional_spaces(self):
         """
         Removes spaces before and after certain symbols.

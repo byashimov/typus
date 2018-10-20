@@ -25,10 +25,18 @@ def get_factory():
 
 
 @pytest.mark.parametrize('source, expected', (
-    ('111 р', f'111{NBSP}₽'),
+    ('110 р', f'110{NBSP}₽'),
     ('111 р.', f'111{NBSP}₽'),
-    ('111 руб', f'111{NBSP}₽'),
-    ('111 руб.', f'111{NBSP}₽'),
+    ('112 руб', f'112{NBSP}₽'),
+    ('113 руб.', f'113{NBSP}₽'),
+    # With comma
+    ('114,00 р', f'114,00{NBSP}₽'),
+    ('115.00 р', f'115.00{NBSP}₽'),
+    # Ignores
+    ('116 рубчиков', '116 рубчиков'),
+    ('117 ру', '117 ру'),
+    # Case sensivity
+    ('117 Р', '117 Р'),
 ))
 def test_ruble(factory, source, expected):
     typus = factory('ruble')
@@ -146,6 +154,7 @@ def test_pairs(factory, source, expected):
     ('1km', f'1{NBSP}km'),
     ('1mg', f'1{NBSP}mg'),
     ('1kg', f'1{NBSP}kg'),
+    ('1ml', f'1{NBSP}ml'),
     ('1mA•h', f'1{NBSP}mA•h'),
     ('1dpi', f'1{NBSP}dpi'),
     # Cyrillic
@@ -157,6 +166,8 @@ def test_pairs(factory, source, expected):
     ('1мг', f'1{NBSP}мг'),
     ('1г', f'1{NBSP}г'),
     ('1кг', f'1{NBSP}кг'),
+    ('1мл', f'1{NBSP}мл'),
+    ('1л', f'1{NBSP}л'),
     ('1т', f'1{NBSP}т'),
     ('1мА•ч', f'1{NBSP}мА•ч'),
     # Skips
@@ -169,6 +180,8 @@ def test_pairs(factory, source, expected):
     ('4th', '4th'),  # floor
     ('1px', '1px'),
     ('1000A', '1000A'),
+    # Case sensivity
+    ('1000ML', '1000ML'),
 ))
 def test_units(factory, source, expected):
     typus = factory('units')
@@ -250,6 +263,8 @@ def test_complex_symbols(factory, source, expected):
     ('5/6', '⅚'),
     ('5/8', '⅝'),
     ('7/8', '⅞'),
+    # False positive
+    ('11/22', '11/22'),
 ))
 def test_vulgar_fractions(factory, source, expected):
     typus = factory('vulgar_fractions')
