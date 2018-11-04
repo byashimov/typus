@@ -2,13 +2,12 @@ from setuptools import setup
 
 setup(
     name='typus',
-    version='0.1',
-    description='Multilanguage language typographer',
+    version='0.2',
+    description='Multilanguage language typograph',
     url='https://github.com/byashimov/typus',
     author='Murad Byashimov',
     author_email='byashimov@gmail.com',
     packages=['typus'],
-    install_requires=['future'],
     license='BSD',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -17,14 +16,8 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.5',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )

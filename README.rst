@@ -16,7 +16,7 @@ and let it handle all that formating headache:
 
 Copy & paste this example to your rich text editor. Result may depend on
 the font of your choice.
-For instance, there is a tiny non-breakable space between ``A. A.`` you
+For instance, there is a tiny non-breaking space between ``A. A.`` you
 can see with Helvetica:
 
 .. image:: https://raw.githubusercontent.com/byashimov/typus/develop/docs/example.png
@@ -42,7 +42,7 @@ Usage
 -----
 
 Currently Typus supports English and Russian languages only.
-Which doesn't mean it can't handle more. I'm quite sure it covers Serbian
+But it doesn't mean it can't handle more. I'm quite sure it covers Serbian
 and Turkmen.
 
 In fact, Typus doesn't make difference between languages. It works with text.
@@ -85,10 +85,11 @@ What it does
 - Replaces vulgar fractions ``1/2`` with unicode characters: ``½``.
 - Turns multiply symbol to a real one: ``3x3`` becomes ``3×3``.
 - Replaces quotes with primes: ``2' 4"`` becomes ``2′ 4″``.
-- Puts non-breakable spaces.
+- Puts non-breaking spaces.
 - Puts ruble symbol.
 - Trims spaces at the end of lines.
 - and much more.
+
 
 Documentation
 -------------
@@ -113,14 +114,27 @@ Compatibility
     :alt: Codecov
     :target: https://codecov.io/gh/byashimov/typus
 
-Tested on Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6.
+Tested on Python 3.6, 3.7.
 
 
-Todo
-----
+Changelog
+---------
 
-- Rewrite tests, they are ugly as hell.
-- Add missing doctests.
+0.2
+~~~
+
+- Python 3.6 and higher are supported only.
+  However should work on any 3.x branch. That's because 3.6 string formatting is
+  used in tests to make them easier to read and write.
+- ``EnRuExpressions`` is no longer a mixin but processor.
+- Better, cleaner tests with pytest.
+- Minor fixes and improvements.
+
+0.1
+~~~
+
+- Initial release.
+
 
 .. _demo: https://byashimov.com/typus/
 .. _web-service: https://byashimov.com/typus/api/

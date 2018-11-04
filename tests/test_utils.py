@@ -1,67 +1,56 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+# pylint: disable=anomalous-backslash-in-string
 
-from builtins import *  # noqa
+import pytest
 
-import unittest2
 from typus.utils import idict, splinter
 
 
-class IdictTest(unittest2.TestCase):
-    def setUp(self):
-        self.source = {'A': 0, 'b': 1}
-        self.compare = {'a': 0, 'b': 1}
-
-    def test_create_from_dict(self):
-        target = idict(self.source)
-        self.assertEqual(self.compare, target)
-        self.assertNotEqual(self.source, target)
-
-    def test_create_from_seq(self):
-        target = idict(self.source.items())
-        self.assertEqual(self.compare, target)
-        self.assertNotEqual(self.source, target)
-
-    def test_create_from_kwargs(self):
-        target = idict(**self.source)
-        self.assertEqual(self.compare, target)
-        self.assertNotEqual(self.source, target)
-
-    def test_create_from_dict_and_kwargs(self):
-        target = idict(self.source, B=1)
-        self.assertEqual(self.compare, target)
+@pytest.mark.parametrize('source, expected', (
+    ({'A': 0, 'b': 1, 'BAr': 2}, {'a': 0, 'b': 1, 'bar': 2}),
+))
+def test_idict(source, expected):
+    result = idict(source)
+    assert result == expected
+    assert source != result
 
 
-class SplinterTest(unittest2.TestCase):
-    def test_basic(self):
-        split = splinter(',')
-        self.assertEqual(split('a, b,c'), ['a', 'b', 'c'])
-        self.assertEqual(split('a, b\,c'), ['a', 'b,c'])
+@pytest.mark.parametrize('source, expected', (
+    ('a, b,c', ['a', 'b', 'c']),
+    ('a, b\,c', ['a', 'b,c']),
+))
+def test_splinter_basic(source, expected):
+    split = splinter(',')
+    assert split(source) == expected
 
-    def test_junk_delimiter(self):
-        with self.assertRaises(ValueError):
-            splinter('\\')
 
-        with self.assertRaises(ValueError):
-            splinter('\\  ')
+@pytest.mark.parametrize('source', (
+    '\\', '\\  ', '  ',
+))
+def test_splinter_junk_delimiter(source):
+    with pytest.raises(ValueError):
+        splinter(source)
 
-        with self.assertRaises(ValueError):
-            splinter('  ')
 
-    def test_positional_spaces(self):
-        split = splinter(';')
-        self.assertEqual(split(' a; b;c'), ['a', 'b', 'c'])
-        self.assertEqual(split(' a; b ;c'), ['a', 'b', 'c'])
-        self.assertEqual(split(' a; b ;c '), ['a', 'b', 'c'])
+@pytest.mark.parametrize('source, expected', (
+    (' a; b;c', ['a', 'b', 'c']),
+    (' a; b ;c', ['a', 'b', 'c']),
+    (' a; b ;c ', ['a', 'b', 'c']),
+))
+def test_splinter_positional_spaces(source, expected):
+    split = splinter(';')
+    assert split(source) == expected
 
-    def test_delimiter_with_spaces(self):
-        split = splinter(' @  ')
-        self.assertEqual(split('a@ b@ c '), ['a', 'b', 'c'])
 
-    def test_regex_delimiter(self):
-        split = splinter('$')
-        self.assertEqual(split('a$b$c'), ['a', 'b', 'c'])
+def test_splinter_delimiter_with_spaces():
+    split = splinter(' @  ')
+    assert split('a@ b@ c ') == ['a', 'b', 'c']
 
-    def test_doesnt_remove_other_slashes(self):
-        split = splinter('*')
-        self.assertEqual(split('a * b * c\*c \\b'), ['a', 'b', 'c*c \\b'])
+
+def test_splinter_regex_delimiter():
+    split = splinter('$')
+    assert split('a$b$c') == ['a', 'b', 'c']
+
+
+def test_splinter_doesnt_remove_other_slashes():
+    split = splinter('*')
+    assert split('a * b * c\*c \\b') == ['a', 'b', 'c*c \\b']

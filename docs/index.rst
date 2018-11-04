@@ -13,7 +13,6 @@ Contents
 
    get_started
    processors
-   mixins
    utils
 
 
