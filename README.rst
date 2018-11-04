@@ -90,6 +90,7 @@ What it does
 - Trims spaces at the end of lines.
 - and much more.
 
+
 Documentation
 -------------
 
@@ -113,7 +114,27 @@ Compatibility
     :alt: Codecov
     :target: https://codecov.io/gh/byashimov/typus
 
-Tested on Python 3.6 but should work on any 3.x version.
+Tested on Python 3.6, 3.7.
+
+
+Changelog
+---------
+
+0.2
+~~~
+
+- Python 3.6 and higher are supported only.
+  However should work on any 3.x branch. That's because 3.6 string formatting is
+  used in tests to make them easier to read and write.
+- ``EnRuExpressions`` is no longer a mixin but processor.
+- Better, cleaner tests with pytest.
+- Minor fixes and improvements.
+
+0.1
+~~~
+
+- Initial release.
+
 
 .. _demo: https://byashimov.com/typus/
 .. _web-service: https://byashimov.com/typus/api/
