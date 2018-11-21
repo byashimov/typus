@@ -7,7 +7,7 @@ setup(
     url='https://github.com/byashimov/typus',
     author='Murad Byashimov',
     author_email='byashimov@gmail.com',
-    packages=['typus'],
+    packages=['typus', 'typus.processors'],
     license='BSD',
     classifiers=[
         'Development Status :: 4 - Beta',
