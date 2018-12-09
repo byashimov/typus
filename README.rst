@@ -79,7 +79,7 @@ What it does
 - Replaces regular quotes ``"foo 'bar' baz"`` with typographic pairs:
   ``“foo ‘bar’ baz”``. Quotes style depends on language and your Typus configuration.
 - Replaces regular dash ``foo - bar`` with mdash or ndash or minus.
-  Depends on case: plain text, digit rage, etc.
+  Depends on case: plain text, digit range, math, etc.
 - Replaces complex symbols such as ``(c)`` with unicode characters: ``©``.
   Cyrillic analogs are supported too.
 - Replaces vulgar fractions ``1/2`` with unicode characters: ``½``.
