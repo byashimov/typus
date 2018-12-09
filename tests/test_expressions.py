@@ -79,14 +79,15 @@ def test_apostrophe(factory, source, expected):
 
 @pytest.mark.parametrize('source, expected', (
     ('--', '--'),
-    (', - foo', f',{MDASH_PAIR}foo'),
     ('foo - foo', f'foo{MDASH_PAIR}foo'),
+    # Leading comma case
+    (', - foo', f',{MDASH}{THNSP}foo'),
+    (', -- foo', f',{MDASH}{THNSP}foo'),
     # if line begins, adds nbsp after mdash
     ('-- foo', f'{MDASH}{NBSP}foo'),
     # if line ends, adds nbsp before mdash
     ('foo --', f'foo{NBSP}{MDASH}'),
     ('foo -- bar', f'foo{MDASH_PAIR}bar'),
-    (', -- foo', f',{MDASH_PAIR}foo'),
     # Python markdown replaces dash with ndash, don't know why
     (f'foo {NDASH} foo', f'foo{MDASH_PAIR}foo'),
     ('foo - "11" 00', f'foo{MDASH_PAIR}"11" 00'),

@@ -265,6 +265,9 @@ class EnRuExpressions(BaseExpressions):
             # Also mdash can be at the end of the line in poems
             (r'{0}+\-{{1,2}}{0}*(?=$|<br/?>)'.format(ANYSP),
              r'{0}{1}'.format(NBSP, MDASH)),
+
+            # Special case with leading comma
+            (',' + MDASH_PAIR, f',{MDASH}{THNSP}'),
         )
         return expr
 
