@@ -355,7 +355,7 @@ class EnRuExpressions(BaseExpressions):
 
     def expr_ranges(self):
         """
-        Replaces dash with mdash in ranges.
+        Replaces dash with ndash in ranges.
         Supports float and negative values.
         Tries to not mess with minus: skips if any math operator or word
         was found after dash: 3-2=1, 24-pin.
@@ -369,7 +369,7 @@ class EnRuExpressions(BaseExpressions):
         def replace(match):
             left, dash, right = match.groups()
             if ufloat(left) < ufloat(right):
-                dash = MDASH
+                dash = NDASH
             return '{0}{1}{2}'.format(left, dash, right)
 
         expr = (

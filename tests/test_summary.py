@@ -75,7 +75,7 @@ def test_primes(assert_typus, source, expected):
 @pytest.mark.parametrize('source, expected', (
     ('555-55-55', f'555{NDASH}55{NDASH}55'),
     ('55-555-55', f'55{NDASH}555{NDASH}55'),
-    ('55-555', f'55{MDASH}555'),  # + range
+    ('55-555', f'55{NDASH}555'),  # + range
 ))
 def test_phones(assert_typus, source, expected):
     assert_typus(source, expected)
@@ -83,18 +83,18 @@ def test_phones(assert_typus, source, expected):
 
 @pytest.mark.parametrize('source, expected', (
     ('25-foo', '25-foo'),
-    ('2-3', f'2{MDASH}3'),
-    ('2,5-3', f'2,5{MDASH}3'),
-    ('0.5-3', f'0.5{MDASH}3'),
-    ('2-3 foo', f'2{MDASH}3{NBSP}foo'),  # + ranges
-    ('(15-20 items)', f'(15{MDASH}20{NBSP}items)'),
+    ('2-3', f'2{NDASH}3'),
+    ('2,5-3', f'2,5{NDASH}3'),
+    ('0.5-3', f'0.5{NDASH}3'),
+    ('2-3 foo', f'2{NDASH}3{NBSP}foo'),  # + ranges
+    ('(15-20 items)', f'(15{NDASH}20{NBSP}items)'),
 
     # Float
-    ('0,5-3', f'0,5{MDASH}3'),
-    ('-0,5-3', f'{MINUS}0,5{MDASH}3'),
-    ('-5.5-3', f'{MINUS}5.5{MDASH}3'),
-    ('-5,5-3', f'{MINUS}5,5{MDASH}3'),
-    ('-5,5-3.5', f'{MINUS}5,5{MDASH}3.5'),
+    ('0,5-3', f'0,5{NDASH}3'),
+    ('-0,5-3', f'{MINUS}0,5{NDASH}3'),
+    ('-5.5-3', f'{MINUS}5.5{NDASH}3'),
+    ('-5,5-3', f'{MINUS}5,5{NDASH}3'),
+    ('-5,5-3.5', f'{MINUS}5,5{NDASH}3.5'),
     ('2 - 3', f'2{NBSP}{MINUS}{NBSP}3'),
     ('2-3 x 4', f'2{MINUS}3{NBSP}{TIMES}{NBSP}4'),
     ('2-3 * 4', f'2{MINUS}3{NBSP}{TIMES}{NBSP}4'),
@@ -108,7 +108,7 @@ def test_ranges(assert_typus, source, expected):
     # Minus
     (f'3{NBSP}-{NBSP}2', f'3{NBSP}{MINUS}{NBSP}2'),
     # This one clashes with range
-    ('2-3', f'2{MDASH}3'),
+    ('2-3', f'2{NDASH}3'),
     # This one clashes with mdash
     (f'x{NBSP}-{NBSP}3', f'x{NBSP}{MDASH} 3'),
     ('-3', f'{MINUS}3'),

@@ -190,19 +190,19 @@ def test_units(factory, source, expected):
 
 @pytest.mark.parametrize('source, expected', (
     ('25-foo', '25-foo'),
-    ('2-3', f'2{MDASH}3'),
-    ('2,5-3', f'2,5{MDASH}3'),
-    ('0.5-3', f'0.5{MDASH}3'),
+    ('2-3', f'2{NDASH}3'),
+    ('2,5-3', f'2,5{NDASH}3'),
+    ('0.5-3', f'0.5{NDASH}3'),
 
-    ('2-3 foo', f'2{MDASH}3 foo'),
-    ('(15-20 items)', f'(15{MDASH}20 items)'),
+    ('2-3 foo', f'2{NDASH}3 foo'),
+    ('(15-20 items)', f'(15{NDASH}20 items)'),
 
     # Float
-    ('0,5-3', f'0,5{MDASH}3'),
-    ('-0,5-3', f'-0,5{MDASH}3'),
-    ('-5.5-3', f'-5.5{MDASH}3'),
-    ('-5,5-3', f'-5,5{MDASH}3'),
-    ('-5,5-3.5', f'-5,5{MDASH}3.5'),
+    ('0,5-3', f'0,5{NDASH}3'),
+    ('-0,5-3', f'-0,5{NDASH}3'),
+    ('-5.5-3', f'-5.5{NDASH}3'),
+    ('-5,5-3', f'-5,5{NDASH}3'),
+    ('-5,5-3.5', f'-5,5{NDASH}3.5'),
 
     # Skips
     ('2 - 3', '2 - 3'),
