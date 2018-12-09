@@ -15,18 +15,20 @@ __all__ = (
     'RDQUO',
     'RSQUO',
     'SPRIME',
+    'THNSP',
     'TIMES',
     'WHSP',
 )
 
 NBSP = '\u00A0'
 NNBSP = '\u202F'
+THNSP = '\u2009'
 WHSP = ' '
-ANYSP = r'[{0}{1}{2}]'.format(WHSP, NBSP, NNBSP)
+ANYSP = r'[{}{}{}{}]'.format(WHSP, NBSP, NNBSP, THNSP)
 
 NDASH = '–'
 MDASH = '—'
-MDASH_PAIR = NBSP + MDASH + WHSP
+MDASH_PAIR = NNBSP + MDASH + THNSP
 HYPHEN = ''
 
 MINUS = '−'

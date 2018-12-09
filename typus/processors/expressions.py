@@ -242,7 +242,7 @@ class EnRuExpressions(BaseExpressions):
 
         >>> from typus import en_typus
         >>> en_typus('foo -- bar')  # adds non-breaking space after `foo`
-        'foo\u00A0— bar'
+        'foo\u202f—\u2009bar'
         """
 
         expr = (

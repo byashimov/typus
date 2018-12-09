@@ -119,7 +119,7 @@ class RuQuotes(BaseQuotes):
 
     >>> from typus import ru_typus
     >>> ru_typus('Он сказал: "\'Винни-Пух\' -- моя любимая книга!".')
-    'Он сказал: «„Винни-Пух“ — моя любимая книга!».'
+    'Он\xa0сказал: «„Винни-Пух“\u202f—\u2009моя любимая книга!».'
     """
 
     # Left odd, right odd, left even, right even
