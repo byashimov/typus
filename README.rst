@@ -124,8 +124,8 @@ Changelog
 ~~~
 
 - Python 3.6 and higher are supported only.
-  However should work on any 3.x branch. That's because 3.6 string formatting is
-  used in tests to make them easier to read and write.
+  That's because 3.6 string formatting is used in tests to make them easier
+  to read and write.
 - ``EnRuExpressions`` is no longer a mixin but processor.
 - Better, cleaner tests with pytest.
 - Minor fixes and improvements.

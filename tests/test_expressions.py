@@ -203,6 +203,9 @@ def test_units(factory, source, expected):
     # Left is less than or equal to right
     ('3-2', '3-2'),
     ('3-3', '3-3'),
+
+    # Doesn't affect math
+    ('1—2=4', '1—2=4'),
 ))
 def test_ranges(factory, source, expected):
     typus = factory('ranges')
@@ -275,6 +278,7 @@ def test_math(factory, source, expected):
     assert typus(f'3{source}3') == f'3{expected}3'
     assert typus(f'3 {source} 3') == f'3 {expected} 3'
     assert typus(f'x {source} 3') == f'x {expected} 3'
+    assert typus(f'3{source}3=3') == f'3{expected}3=3'
 
 
 @pytest.mark.parametrize('source, expected', (
