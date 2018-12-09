@@ -110,16 +110,6 @@ def test_primes(factory, source, expected):
 
 
 @pytest.mark.parametrize('source, expected', (
-    ('555-55-55', f'555{NDASH}55{NDASH}55'),
-    ('55-555-55', f'55{NDASH}555{NDASH}55'),
-    ('55-555', '55-555'),  # skips
-))
-def test_phones(factory, source, expected):
-    typus = factory('phones')
-    assert expected == typus(source)
-
-
-@pytest.mark.parametrize('source, expected', (
     ('4444444 fooo', '4444444 fooo'),
     ('444 foo', f'444{NBSP}foo'),
     ('444 +', f'444{NBSP}+'),

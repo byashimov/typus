@@ -27,6 +27,7 @@ ANYSP = r'[{0}{1}{2}]'.format(WHSP, NBSP, NNBSP)
 NDASH = '–'
 MDASH = '—'
 MDASH_PAIR = NBSP + MDASH + WHSP
+HYPHEN = ''
 
 MINUS = '−'
 TIMES = '×'

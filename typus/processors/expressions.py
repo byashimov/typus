@@ -62,7 +62,7 @@ class EnRuExpressions(BaseExpressions):
     """
 
     expressions = (
-        'spaces linebreaks apostrophe complex_symbols mdash primes phones '
+        'spaces linebreaks apostrophe complex_symbols mdash primes '
         'digit_spaces pairs units ranges vulgar_fractions math ruble abbrs '
         'rep_positional_spaces del_positional_spaces'
     ).split()
@@ -287,23 +287,6 @@ class EnRuExpressions(BaseExpressions):
         )
         return expr
 
-    @staticmethod
-    def expr_phones():
-        """
-        Replaces dash with ndash in phone numbers which should be a trio of
-        2-4 length digits.
-
-        >>> from typus import en_typus
-        >>> en_typus('111-00-00'), en_typus('00-111-00'), en_typus('00-00-111')
-        ('111–00–00', '00–111–00', '00–00–111')
-        """
-
-        expr = (
-            (r'([0-9]{2,4})\-([0-9]{2,4})\-([0-9]{2,4})',
-             r'\1{0}\2{0}\3'.format(NDASH)),
-        )
-        return expr
-
     def expr_digit_spaces(self):
         """
         Replaces whitespace with non-breaking space after 4 (and less)
@@ -412,10 +395,6 @@ class EnRuExpressions(BaseExpressions):
         '3 × 3 = 9'
         >>> en_typus('x3 better!')
         '×3 better!'
-
-        .. important::
-
-            Should run after `mdash` and `phones` expressions.
         """
 
         expr = (

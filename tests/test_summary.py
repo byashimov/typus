@@ -73,15 +73,6 @@ def test_primes(assert_typus, source, expected):
 
 
 @pytest.mark.parametrize('source, expected', (
-    ('555-55-55', f'555{NDASH}55{NDASH}55'),
-    ('55-555-55', f'55{NDASH}555{NDASH}55'),
-    ('55-555', f'55{NDASH}555'),  # + range
-))
-def test_phones(assert_typus, source, expected):
-    assert_typus(source, expected)
-
-
-@pytest.mark.parametrize('source, expected', (
     ('25-foo', '25-foo'),
     ('2-3', f'2{NDASH}3'),
     ('2,5-3', f'2,5{NDASH}3'),
