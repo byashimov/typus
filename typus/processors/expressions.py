@@ -361,7 +361,7 @@ class EnRuExpressions(BaseExpressions):
         expr = (
             (r'(-?(?:[0-9]+[\.,][0-9]+|[0-9]+))(-)'
              r'([0-9]+[\.,][0-9]+|[0-9]+)'
-             r'(?!{0}+{1}|{2})'
+             r'(?!{0}*{1}|{2})'
              .format(ANYSP, self.math_operators, self.words),
              replace),
         )

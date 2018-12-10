@@ -206,7 +206,7 @@ def test_units(factory, source, expected):
     ('3-3', '3-3'),
 
     # Doesn't affect math
-    ('1—2=4', '1—2=4'),
+    ('1-2=4', f'1-2=4'),
 ))
 def test_ranges(factory, source, expected):
     typus = factory('ranges')
