@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='typus',
-    version='0.2',
+    version='0.2.2',
     description='Multilanguage language typograph',
     url='https://github.com/byashimov/typus',
     author='Murad Byashimov',
