@@ -120,6 +120,16 @@ Tested on Python 3.6, 3.7.
 Changelog
 ---------
 
+0.2.2
+~~~~~
+
+- Improved ``mdash``: narrow spaces are used instead of regular ones.
+- Improved ``range``: ``mdash`` is replaced with ``ndash``.
+- Dropped ``phone`` processing. Using regular hyphen-minus is ok,
+  because there is no valuable visual difference between that and hyphen.
+
+Thanks to @danaksim for the help.
+
 0.2
 ~~~
 
