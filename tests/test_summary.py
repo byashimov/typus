@@ -41,14 +41,15 @@ def test_quotes(assert_typus, source, expected):
 
 @pytest.mark.parametrize('source, expected', (
     ('--', '--'),
-    (', - foo', f',{MDASH_PAIR}foo'),
     ('foo - foo', f'foo{MDASH_PAIR}foo'),
+    # Leading comma case
+    (', - foo', f',{MDASH}{THNSP}foo'),
+    (', -- foo', f',{MDASH}{THNSP}foo'),
     # if line begins, adds nbsp after mdash
     ('-- foo', f'{MDASH}{NBSP}foo'),
     # if line ends, adds nbsp before mdash
     ('foo --', f'foo{NBSP}{MDASH}'),
     ('foo -- bar', f'foo{MDASH_PAIR}bar'),
-    (', -- foo', f',{MDASH_PAIR}foo'),
     # Python markdown replaces dash with ndash, don't know why
     (f'foo {NDASH} foo', f'foo{MDASH_PAIR}foo'),
 
@@ -73,28 +74,19 @@ def test_primes(assert_typus, source, expected):
 
 
 @pytest.mark.parametrize('source, expected', (
-    ('555-55-55', f'555{NDASH}55{NDASH}55'),
-    ('55-555-55', f'55{NDASH}555{NDASH}55'),
-    ('55-555', f'55{MDASH}555'),  # + range
-))
-def test_phones(assert_typus, source, expected):
-    assert_typus(source, expected)
-
-
-@pytest.mark.parametrize('source, expected', (
     ('25-foo', '25-foo'),
-    ('2-3', f'2{MDASH}3'),
-    ('2,5-3', f'2,5{MDASH}3'),
-    ('0.5-3', f'0.5{MDASH}3'),
-    ('2-3 foo', f'2{MDASH}3{NBSP}foo'),  # + ranges
-    ('(15-20 items)', f'(15{MDASH}20{NBSP}items)'),
+    ('2-3', f'2{NDASH}3'),
+    ('2,5-3', f'2,5{NDASH}3'),
+    ('0.5-3', f'0.5{NDASH}3'),
+    ('2-3 foo', f'2{NDASH}3{NBSP}foo'),  # + ranges
+    ('(15-20 items)', f'(15{NDASH}20{NBSP}items)'),
 
     # Float
-    ('0,5-3', f'0,5{MDASH}3'),
-    ('-0,5-3', f'{MINUS}0,5{MDASH}3'),
-    ('-5.5-3', f'{MINUS}5.5{MDASH}3'),
-    ('-5,5-3', f'{MINUS}5,5{MDASH}3'),
-    ('-5,5-3.5', f'{MINUS}5,5{MDASH}3.5'),
+    ('0,5-3', f'0,5{NDASH}3'),
+    ('-0,5-3', f'{MINUS}0,5{NDASH}3'),
+    ('-5.5-3', f'{MINUS}5.5{NDASH}3'),
+    ('-5,5-3', f'{MINUS}5,5{NDASH}3'),
+    ('-5,5-3.5', f'{MINUS}5,5{NDASH}3.5'),
     ('2 - 3', f'2{NBSP}{MINUS}{NBSP}3'),
     ('2-3 x 4', f'2{MINUS}3{NBSP}{TIMES}{NBSP}4'),
     ('2-3 * 4', f'2{MINUS}3{NBSP}{TIMES}{NBSP}4'),
@@ -108,9 +100,9 @@ def test_ranges(assert_typus, source, expected):
     # Minus
     (f'3{NBSP}-{NBSP}2', f'3{NBSP}{MINUS}{NBSP}2'),
     # This one clashes with range
-    ('2-3', f'2{MDASH}3'),
+    ('2-3', f'2{NDASH}3'),
     # This one clashes with mdash
-    (f'x{NBSP}-{NBSP}3', f'x{NBSP}{MDASH} 3'),
+    (f'x{NBSP}-{NBSP}3', f'x{NNBSP}{MDASH}{THNSP}3'),
     ('-3', f'{MINUS}3'),
 
     # Star
@@ -166,6 +158,7 @@ def test_example(assert_typus):
         'движения. Смысл жизни -- амбивалентно (с) дискредитирует '
         'закон (r) исключённого(tm) третьего (тм)...      \n\n\n'
         '1500 мА*ч\n\n'
+        '1-2=4\n'
         '- Химическое соединение (p) ненаблюдаемо контролирует экран-ый '
         'квазар (р). Идеи 3/4  гедонизма занимают b & b центральное место '
         'в утилитаризме(sm) "Милля и Бентама", однако <- гравитирующая -> '
@@ -176,15 +169,17 @@ def test_example(assert_typus):
     )
     expected = (
         'Излучение, как следует из_вышесказанного, концентрирует '
-        'внутримолекулярный предмет_— деятельности. «…ff „Можно?“ '
-        'предположить, что силовое_— „поле «мент „d“ ально» отклоняет“ '
+        'внутримолекулярный предмет\u202f—\u2009деятельности. «…ff „Можно?“ '
+        'предположить, что силовое\u202f—\u2009„поле «мент „d“ ально» '
+        'отклоняет“ '
         'сенсибельный „квазар!..“ cc», не_учитывая мнения авторитетов. '
         'Искусство испускает данный электрон, учитывая опасность, '
         '<code> "d" test -- test(c)</code> которую представляли собой '
         'писания Дюринга для не_окрепшего еще немецкого рабочего '
-        'движения. Смысл жизни_— амбивалентно ©_дискредитирует закон® '
-        'исключённого™ третьего™…\n\n'
+        'движения. Смысл жизни\u202f—\u2009амбивалентно ©_дискредитирует '
+        'закон® исключённого™ третьего™…\n\n'
         '1500_мА•ч\n\n'
+        '1−2=4\n'
         '—_Химическое соединение℗ ненаблюдаемо контролирует экран-ый '
         'квазар℗. Идеи ¾_гедонизма занимают b_&_b_центральное место '
         'в_утилитаризме℠ «Милля и_Бентама», однако ←_гравитирующая_→ '

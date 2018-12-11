@@ -79,14 +79,15 @@ def test_apostrophe(factory, source, expected):
 
 @pytest.mark.parametrize('source, expected', (
     ('--', '--'),
-    (', - foo', f',{MDASH_PAIR}foo'),
     ('foo - foo', f'foo{MDASH_PAIR}foo'),
+    # Leading comma case
+    (', - foo', f',{MDASH}{THNSP}foo'),
+    (', -- foo', f',{MDASH}{THNSP}foo'),
     # if line begins, adds nbsp after mdash
     ('-- foo', f'{MDASH}{NBSP}foo'),
     # if line ends, adds nbsp before mdash
     ('foo --', f'foo{NBSP}{MDASH}'),
     ('foo -- bar', f'foo{MDASH_PAIR}bar'),
-    (', -- foo', f',{MDASH_PAIR}foo'),
     # Python markdown replaces dash with ndash, don't know why
     (f'foo {NDASH} foo', f'foo{MDASH_PAIR}foo'),
     ('foo - "11" 00', f'foo{MDASH_PAIR}"11" 00'),
@@ -106,16 +107,6 @@ def test_mdash(factory, source, expected):
 ))
 def test_primes(factory, source, expected):
     typus = factory('primes')
-    assert expected == typus(source)
-
-
-@pytest.mark.parametrize('source, expected', (
-    ('555-55-55', f'555{NDASH}55{NDASH}55'),
-    ('55-555-55', f'55{NDASH}555{NDASH}55'),
-    ('55-555', '55-555'),  # skips
-))
-def test_phones(factory, source, expected):
-    typus = factory('phones')
     assert expected == typus(source)
 
 
@@ -190,19 +181,19 @@ def test_units(factory, source, expected):
 
 @pytest.mark.parametrize('source, expected', (
     ('25-foo', '25-foo'),
-    ('2-3', f'2{MDASH}3'),
-    ('2,5-3', f'2,5{MDASH}3'),
-    ('0.5-3', f'0.5{MDASH}3'),
+    ('2-3', f'2{NDASH}3'),
+    ('2,5-3', f'2,5{NDASH}3'),
+    ('0.5-3', f'0.5{NDASH}3'),
 
-    ('2-3 foo', f'2{MDASH}3 foo'),
-    ('(15-20 items)', f'(15{MDASH}20 items)'),
+    ('2-3 foo', f'2{NDASH}3 foo'),
+    ('(15-20 items)', f'(15{NDASH}20 items)'),
 
     # Float
-    ('0,5-3', f'0,5{MDASH}3'),
-    ('-0,5-3', f'-0,5{MDASH}3'),
-    ('-5.5-3', f'-5.5{MDASH}3'),
-    ('-5,5-3', f'-5,5{MDASH}3'),
-    ('-5,5-3.5', f'-5,5{MDASH}3.5'),
+    ('0,5-3', f'0,5{NDASH}3'),
+    ('-0,5-3', f'-0,5{NDASH}3'),
+    ('-5.5-3', f'-5.5{NDASH}3'),
+    ('-5,5-3', f'-5,5{NDASH}3'),
+    ('-5,5-3.5', f'-5,5{NDASH}3.5'),
 
     # Skips
     ('2 - 3', '2 - 3'),
@@ -213,6 +204,9 @@ def test_units(factory, source, expected):
     # Left is less than or equal to right
     ('3-2', '3-2'),
     ('3-3', '3-3'),
+
+    # Doesn't affect math
+    ('1-2=4', f'1-2=4'),
 ))
 def test_ranges(factory, source, expected):
     typus = factory('ranges')
@@ -285,6 +279,7 @@ def test_math(factory, source, expected):
     assert typus(f'3{source}3') == f'3{expected}3'
     assert typus(f'3 {source} 3') == f'3 {expected} 3'
     assert typus(f'x {source} 3') == f'x {expected} 3'
+    assert typus(f'3{source}3=3') == f'3{expected}3=3'
 
 
 @pytest.mark.parametrize('source, expected', (

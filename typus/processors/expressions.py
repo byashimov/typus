@@ -62,7 +62,7 @@ class EnRuExpressions(BaseExpressions):
     """
 
     expressions = (
-        'spaces linebreaks apostrophe complex_symbols mdash primes phones '
+        'spaces linebreaks apostrophe complex_symbols mdash primes '
         'digit_spaces pairs units ranges vulgar_fractions math ruble abbrs '
         'rep_positional_spaces del_positional_spaces'
     ).split()
@@ -242,7 +242,7 @@ class EnRuExpressions(BaseExpressions):
 
         >>> from typus import en_typus
         >>> en_typus('foo -- bar')  # adds non-breaking space after `foo`
-        'foo\u00A0— bar'
+        'foo\u202f—\u2009bar'
         """
 
         expr = (
@@ -265,6 +265,9 @@ class EnRuExpressions(BaseExpressions):
             # Also mdash can be at the end of the line in poems
             (r'{0}+\-{{1,2}}{0}*(?=$|<br/?>)'.format(ANYSP),
              r'{0}{1}'.format(NBSP, MDASH)),
+
+            # Special case with leading comma
+            (',' + MDASH_PAIR, f',{MDASH}{THNSP}'),
         )
         return expr
 
@@ -284,23 +287,6 @@ class EnRuExpressions(BaseExpressions):
         expr = (
             (r'(^|{0})(\d+)\''.format(ANYSP), r'\1\2' + SPRIME),
             (r'(^|{0})(\d+)"'.format(ANYSP), r'\1\2' + DPRIME),
-        )
-        return expr
-
-    @staticmethod
-    def expr_phones():
-        """
-        Replaces dash with ndash in phone numbers which should be a trio of
-        2-4 length digits.
-
-        >>> from typus import en_typus
-        >>> en_typus('111-00-00'), en_typus('00-111-00'), en_typus('00-00-111')
-        ('111–00–00', '00–111–00', '00–00–111')
-        """
-
-        expr = (
-            (r'([0-9]{2,4})\-([0-9]{2,4})\-([0-9]{2,4})',
-             r'\1{0}\2{0}\3'.format(NDASH)),
         )
         return expr
 
@@ -355,7 +341,7 @@ class EnRuExpressions(BaseExpressions):
 
     def expr_ranges(self):
         """
-        Replaces dash with mdash in ranges.
+        Replaces dash with ndash in ranges.
         Supports float and negative values.
         Tries to not mess with minus: skips if any math operator or word
         was found after dash: 3-2=1, 24-pin.
@@ -369,13 +355,13 @@ class EnRuExpressions(BaseExpressions):
         def replace(match):
             left, dash, right = match.groups()
             if ufloat(left) < ufloat(right):
-                dash = MDASH
+                dash = NDASH
             return '{0}{1}{2}'.format(left, dash, right)
 
         expr = (
             (r'(-?(?:[0-9]+[\.,][0-9]+|[0-9]+))(-)'
              r'([0-9]+[\.,][0-9]+|[0-9]+)'
-             r'(?!{0}+{1}|{2})'
+             r'(?!{0}*{1}|{2})'
              .format(ANYSP, self.math_operators, self.words),
              replace),
         )
@@ -412,10 +398,6 @@ class EnRuExpressions(BaseExpressions):
         '3 × 3 = 9'
         >>> en_typus('x3 better!')
         '×3 better!'
-
-        .. important::
-
-            Should run after `mdash` and `phones` expressions.
         """
 
         expr = (

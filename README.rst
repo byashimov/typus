@@ -79,7 +79,7 @@ What it does
 - Replaces regular quotes ``"foo 'bar' baz"`` with typographic pairs:
   ``“foo ‘bar’ baz”``. Quotes style depends on language and your Typus configuration.
 - Replaces regular dash ``foo - bar`` with mdash or ndash or minus.
-  Depends on case: plain text, digit rage, phone nubers, etc.
+  Depends on case: plain text, digit range, math, etc.
 - Replaces complex symbols such as ``(c)`` with unicode characters: ``©``.
   Cyrillic analogs are supported too.
 - Replaces vulgar fractions ``1/2`` with unicode characters: ``½``.
@@ -124,8 +124,8 @@ Changelog
 ~~~
 
 - Python 3.6 and higher are supported only.
-  However should work on any 3.x branch. That's because 3.6 string formatting is
-  used in tests to make them easier to read and write.
+  That's because 3.6 string formatting is used in tests to make them easier
+  to read and write.
 - ``EnRuExpressions`` is no longer a mixin but processor.
 - Better, cleaner tests with pytest.
 - Minor fixes and improvements.
