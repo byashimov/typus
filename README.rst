@@ -35,7 +35,7 @@ Installation
 
 .. code-block:: console
 
-    $ pip install git+git://github.com/byashimov/typus.git#egg=typus
+    $ pip install typus 
 
 
 Usage
